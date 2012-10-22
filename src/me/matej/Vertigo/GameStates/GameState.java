@@ -45,36 +45,51 @@ public class GameState extends GameStateClass {
 		}
 	}
 
+	// Gravity pulls mario down (+y) by gravity * delta
+	private final double gravity = 0.25f;
+	//private double jumpVelocity; // Speed at which mario falls (or rises)
+	//private final double terminalJumpVelocity = 0.4; // Max velocity mario can ever achieve
+	//private final double jumpCooldownPeriod = 1.0;
+	//private double jumpYOffset;
+
 	@Override
 	public void update(int delta) {
+		Vector oldLoc = new Vector(mario.loc.x, mario.loc.y);
+
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			mario.loc.y -= 0.5d * delta;
+			mario.loc.y -= 0.2d * delta;
+		} else {
+			mario.loc.y += gravity * delta;
 		}
+
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			mario.loc.y += 0.5d * delta;
+			//mario.loc.y += 0.5d * delta;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			mario.loc.x -= 0.5d * delta;
-			if (mario.loc.x < 10) {
-				mario.loc.x = 10;
-				xOffset += 0.5d * delta;
+			mario.loc.x -= 0.2d * delta;
+			if (mario.loc.x < 15) {
+				mario.loc.x = 15;
+				xOffset += 0.2d * delta;
 			}
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			mario.loc.x += 0.5d * delta;
-			double dw = Main.getInstance().getOpenGL().getDisplayMode().getWidth();
-			if (mario.loc.x+mario.size.w+10 > dw) {
-				mario.loc.x = dw - 10 - mario.size.w;
-				xOffset -= 0.5d * delta;
+			mario.loc.x += 0.2d * delta;
+			double dw = OpenGL.getDisplayMode().getWidth();
+			if (mario.loc.x+mario.size.w+15 > dw) {
+				mario.loc.x = dw - 15 - mario.size.w;
+				xOffset -= 0.2d * delta;
 			}
 		}
 
 		for (Obstacle o : obstacles) {
 			o.xOffset = xOffset;
-		}
 
-		// TODO check if mario is clipping outside the view
-		// TODO make movable scene..
+			if (o.basicCollide(mario)) {
+				// Get collision info
+				// Reset to last-known non collision position
+				mario.loc = oldLoc;
+			}
+		}
 	}
 
 	@Override
@@ -127,6 +142,7 @@ public class GameState extends GameStateClass {
 			obstacles.add(e);
 		}
 	}
+
 	@Override
 	public void displayModeChanged(DisplayMode newDisplayMode) {
 		for (Obstacle o : obstacles) {

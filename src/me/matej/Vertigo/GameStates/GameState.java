@@ -56,10 +56,11 @@ public class GameState extends GameStateClass {
 	public void update(int delta) {
 		Vector oldLoc = new Vector(mario.loc.x, mario.loc.y);
 
+		boolean marioAttractedByGravity = true;
+
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			mario.loc.y -= 0.2d * delta;
-		} else {
-			mario.loc.y += gravity * delta;
+			marioAttractedByGravity = false;
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
@@ -79,6 +80,10 @@ public class GameState extends GameStateClass {
 				mario.loc.x = dw - 15 - mario.size.w;
 				xOffset -= 0.2d * delta;
 			}
+		}
+
+		if (marioAttractedByGravity) {
+			mario.loc.y += gravity * delta;
 		}
 
 		for (Obstacle o : obstacles) {

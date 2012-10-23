@@ -59,12 +59,25 @@ public class Entity {
 		}
 		GL11.glEnd();
 	}
-	public boolean basicCollide (Entity other) {
-		me.setBounds((int)loc.x, (int)loc.y, (int)size.w, (int)size.h);
-		him.setBounds((int)other.loc.x, (int)other.loc.y, (int)other.size.w, (int)other.size.h);
+	public boolean basicCollide (Entity o) {
+		//me.setBounds((int)loc.x, (int)loc.y, (int)size.w, (int)size.h);
+		//him.setBounds((int)o.loc.x, (int)o.loc.y, (int)o.size.w, (int)o.size.h);
 
-		if (me.intersects(him))
+		if (o.loc.x > loc.x && o.loc.x < loc.x+size.w && o.loc.y > loc.y && o.loc.y < loc.y+size.h)
 			return true;
+		if (o.loc.x+o.size.w > loc.x && o.loc.x+o.size.w < loc.x+size.w && o.loc.y > loc.y && o.loc.y < loc.y+size.h)
+			return true;
+		if (o.loc.x > loc.x && o.loc.x < loc.x+size.w && o.loc.y+o.size.h > loc.y && o.loc.y+o.size.h < loc.y+size.h)
+			return true;
+		if (o.loc.x+o.size.w > loc.x && o.loc.x+o.size.w < loc.x+size.w && o.loc.y+o.size.w > loc.y && o.loc.y+o.size.h < loc.y+size.h)
+			return true;
+
+		if ((loc.x > o.loc.x && loc.x < o.loc.x+o.size.w && loc.y > o.loc.y && loc.y < o.loc.y+o.size.h) ||
+			(loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w && loc.y > o.loc.y && loc.y < o.loc.y+o.size.h) ||
+			(loc.x > o.loc.x && loc.x < o.loc.x+o.size.w && loc.y+size.h > o.loc.y && loc.y+size.h < o.loc.y+o.size.h) ||
+			(loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w && loc.y+size.h > o.loc.y && loc.y+size.h < o.loc.y+o.size.h)) {
+			return true;
+		}
 
 		return false;
 	}

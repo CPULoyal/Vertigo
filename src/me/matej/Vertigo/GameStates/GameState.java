@@ -92,7 +92,8 @@ public class GameState extends GameStateClass {
 			if (o.basicCollide(mario)) {
 				// Get collision info
 				// Reset to last-known non collision position
-				mario.loc = oldLoc;
+
+				mario.getNonCollisionVector(o);
 			}
 		}
 	}

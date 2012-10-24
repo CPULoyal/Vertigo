@@ -60,19 +60,11 @@ public class Entity {
 		GL11.glEnd();
 	}
 	public boolean basicCollide (Entity o) {
-		//me.setBounds((int)loc.x, (int)loc.y, (int)size.w, (int)size.h);
-		//him.setBounds((int)o.loc.x, (int)o.loc.y, (int)o.size.w, (int)o.size.h);
-
-		if (o.loc.x > loc.x && o.loc.x < loc.x+size.w && o.loc.y > loc.y && o.loc.y < loc.y+size.h)
-			return true;
-		if (o.loc.x+o.size.w > loc.x && o.loc.x+o.size.w < loc.x+size.w && o.loc.y > loc.y && o.loc.y < loc.y+size.h)
-			return true;
-		if (o.loc.x > loc.x && o.loc.x < loc.x+size.w && o.loc.y+o.size.h > loc.y && o.loc.y+o.size.h < loc.y+size.h)
-			return true;
-		if (o.loc.x+o.size.w > loc.x && o.loc.x+o.size.w < loc.x+size.w && o.loc.y+o.size.w > loc.y && o.loc.y+o.size.h < loc.y+size.h)
-			return true;
-
-		if ((loc.x > o.loc.x && loc.x < o.loc.x+o.size.w && loc.y > o.loc.y && loc.y < o.loc.y+o.size.h) ||
+		if ((o.loc.x > loc.x && o.loc.x < loc.x+size.w && o.loc.y > loc.y && o.loc.y < loc.y+size.h) ||
+			(o.loc.x+o.size.w > loc.x && o.loc.x+o.size.w < loc.x+size.w && o.loc.y > loc.y && o.loc.y < loc.y+size.h) ||
+			(o.loc.x > loc.x && o.loc.x < loc.x+size.w && o.loc.y+o.size.h > loc.y && o.loc.y+o.size.h < loc.y+size.h) ||
+			(o.loc.x+o.size.w > loc.x && o.loc.x+o.size.w < loc.x+size.w && o.loc.y+o.size.w > loc.y && o.loc.y+o.size.h < loc.y+size.h) ||
+			(loc.x > o.loc.x && loc.x < o.loc.x+o.size.w && loc.y > o.loc.y && loc.y < o.loc.y+o.size.h) ||
 			(loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w && loc.y > o.loc.y && loc.y < o.loc.y+o.size.h) ||
 			(loc.x > o.loc.x && loc.x < o.loc.x+o.size.w && loc.y+size.h > o.loc.y && loc.y+size.h < o.loc.y+o.size.h) ||
 			(loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w && loc.y+size.h > o.loc.y && loc.y+size.h < o.loc.y+o.size.h)) {
@@ -80,6 +72,51 @@ public class Entity {
 		}
 
 		return false;
+	}
+
+	public Vector getNonCollisionVector (Entity o) {
+		Vector v = new Vector();
+
+		boolean topLeft = false, topRight = false, bottomLeft = false, bottomRight = false;
+		boolean oTopLeft = false, oTopRight = false, oBottomLeft = false, oBottomRight = false;
+
+		if (loc.x > o.loc.x && loc.x < o.loc.x+o.size.w && loc.y > o.loc.y && loc.y < o.loc.y+o.size.h)
+			topLeft = true; // Top Left point
+		if (o.loc.x > loc.x && o.loc.x < loc.x+size.w && o.loc.y > loc.y && o.loc.y < loc.y+size.h)
+			oTopLeft = true;
+
+		if (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w && loc.y > o.loc.y && loc.y < o.loc.y+o.size.h)
+			topRight = true; // Top Right point
+		if (o.loc.x+o.size.w > loc.x && o.loc.x + o.size.w < loc.x+size.w && o.loc.y > loc.y && o.loc.y < loc.y+size.h)
+			oTopRight = true;
+
+		if (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w && loc.y+size.h > o.loc.y && loc.y+size.h < o.loc.y+o.size.h)
+			bottomRight = true; // Bottom Right point
+		if  (o.loc.x+o.size.w > loc.x && o.loc.x+o.size.w < loc.x+size.w && o.loc.y+o.size.h > loc.y && o.loc.y+o.size.h < loc.y+size.h)
+			oBottomRight = true;
+		if (loc.x > o.loc.x && loc.x < o.loc.x+o.size.w && loc.y+size.h > o.loc.y && loc.y+size.h < o.loc.y+o.size.h)
+			bottomLeft = true; // Bottom Left point
+		if (o.loc.x > loc.x && o.loc.x < loc.x+size.w && o.loc.y+o.size.h > loc.y && o.loc.y+o.size.h < loc.y+size.h)
+			oBottomRight = true;
+
+		if (topLeft && topRight || oTopLeft && oTopRight) {
+			// Top side collides.. Translate +y
+			loc.y = o.loc.y;
+		}
+		if (topLeft && bottomLeft || oTopLeft && oBottomLeft) {
+			// Left side collides.. Translate -x
+			loc.x = o.loc.x - size.w;
+		}
+		if (topRight && bottomRight || oTopRight && oBottomRight) {
+			// Right side collides.. Translate +x
+			loc.x = o.loc.x;
+		}
+		if (bottomLeft && bottomRight || oBottomLeft && oBottomRight) {
+			// Bottom side collides.. Translate -y
+			loc.y = o.loc.y - size.h;
+		}
+
+		return v;
 	}
 
 	public Entity () {

@@ -77,43 +77,35 @@ public class Entity {
 	public Vector getNonCollisionVector (Entity o) {
 		Vector v = new Vector();
 
-		boolean topLeft = false, topRight = false, bottomLeft = false, bottomRight = false;
-		boolean oTopLeft = false, oTopRight = false, oBottomLeft = false, oBottomRight = false;
+		double noOffsetX = o.loc.x;
+		Vector oldLoc = new Vector (loc.x, loc.y);
 
-		if (loc.x > o.loc.x && loc.x < o.loc.x+o.size.w && loc.y > o.loc.y && loc.y < o.loc.y+o.size.h)
-			topLeft = true; // Top Left point
-		if (o.loc.x > loc.x && o.loc.x < loc.x+size.w && o.loc.y > loc.y && o.loc.y < loc.y+size.h)
-			oTopLeft = true;
+		if (o instanceof Obstacle)
+			o.loc.x += ((Obstacle)o).xOffset;
 
-		if (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w && loc.y > o.loc.y && loc.y < o.loc.y+o.size.h)
-			topRight = true; // Top Right point
-		if (o.loc.x+o.size.w > loc.x && o.loc.x + o.size.w < loc.x+size.w && o.loc.y > loc.y && o.loc.y < loc.y+size.h)
-			oTopRight = true;
+		boolean colTop = false, colBottom = false, colLeft = false, colRight = false;
 
-		if (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w && loc.y+size.h > o.loc.y && loc.y+size.h < o.loc.y+o.size.h)
-			bottomRight = true; // Bottom Right point
-		if  (o.loc.x+o.size.w > loc.x && o.loc.x+o.size.w < loc.x+size.w && o.loc.y+o.size.h > loc.y && o.loc.y+o.size.h < loc.y+size.h)
-			oBottomRight = true;
-		if (loc.x > o.loc.x && loc.x < o.loc.x+o.size.w && loc.y+size.h > o.loc.y && loc.y+size.h < o.loc.y+o.size.h)
-			bottomLeft = true; // Bottom Left point
-		if (o.loc.x > loc.x && o.loc.x < loc.x+size.w && o.loc.y+o.size.h > loc.y && o.loc.y+o.size.h < loc.y+size.h)
-			oBottomRight = true;
+		if (((loc.x > o.loc.x && loc.x < o.loc.x+o.size.w) || (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w)) && loc.y+size.h > o.loc.y && loc.y+size.h < o.loc.y+o.size.h) {
+			loc.y = o.loc.y - size.h; // Bottom
+			colBottom = true;
+		} else if (((loc.x > o.loc.x && loc.x < o.loc.x+o.size.w) || (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w)) && loc.y > o.loc.y && loc.y < o.loc.y+o.size.h) {
+			loc.y = o.loc.y + o.size.h; // Top
 
-		if (topLeft && topRight || oTopLeft && oTopRight) {
-			// Top side collides.. Translate +y
-			loc.y = o.loc.y;
+			colTop = true;
 		}
-		if (topLeft && bottomLeft || oTopLeft && oBottomLeft) {
-			// Left side collides.. Translate -x
-			loc.x = o.loc.x - size.w;
+
+		if (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w && ((loc.y+size.h > o.loc.y && loc.y < o.loc.y) || (loc.y+size.h > o.loc.y+o.size.h && loc.y < o.loc.y+o.size.h))) {
+			loc.x = o.loc.x - size.w; // Right
+			colRight = true;
 		}
-		if (topRight && bottomRight || oTopRight && oBottomRight) {
-			// Right side collides.. Translate +x
-			loc.x = o.loc.x;
+
+		if (loc.x > o.loc.x && loc.x < o.loc.x+o.size.w && ((loc.y+size.h > o.loc.y && loc.y < o.loc.y) || (loc.y+size.h > o.loc.y+o.size.h && loc.y < o.loc.y+o.size.h))) {
+			loc.x = o.loc.x+o.size.w; // Left
+			colLeft = true;
 		}
-		if (bottomLeft && bottomRight || oBottomLeft && oBottomRight) {
-			// Bottom side collides.. Translate -y
-			loc.y = o.loc.y - size.h;
+
+		if (o instanceof Obstacle) {
+			o.loc.x = noOffsetX;
 		}
 
 		return v;

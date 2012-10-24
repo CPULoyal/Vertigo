@@ -135,14 +135,11 @@ public class GameState extends GameStateClass {
 		}
 
 		obstacles = new ArrayList<>();
-		double obsY = OpenGL.getDisplayMode().getHeight() - 10;
-		Obstacle[] ents = { new Obstacle(new Vector (0.0, obsY), new SizeVector(1000.0, 10.0), 1, 0, 0),
-						new Obstacle(new Vector(40.0, obsY), new SizeVector(1000.0, 10.0), 1, 1, 0),
-						new Obstacle(new Vector(80.0, obsY), new SizeVector(1000.0, 10.0), 1, 1, 1),
-						new Obstacle(new Vector(160.0, obsY), new SizeVector(1000.0, 10.0), 1, 0, 1),
-						new Obstacle(new Vector(320.0, obsY), new SizeVector(1000.0, 10.0), 0, 1, 1),
-						new Obstacle(new Vector(640.0, obsY), new SizeVector(1000.0, 10.0), 0, 0, 1),
-						new Obstacle(new Vector(1280.0, obsY), new SizeVector(1000.0, 10.0), 0.5f, 1, 0),
+
+		Obstacle[] ents = { new Obstacle(new Vector (0.0, OpenGL.getDisplayMode().getHeight()-100), new SizeVector(300.0, 100.0), 1, 0, 0),
+						new Obstacle(new Vector(300.0, OpenGL.getDisplayMode().getHeight()-50-143), new SizeVector(1000.0, 10.0), 1, 1, 0),
+						new Obstacle(new Vector(300.0, OpenGL.getDisplayMode().getHeight()-50), new SizeVector(1000.0, 10.0), 1, 0, 0)
+
 		};
 		for (Obstacle e : ents) {
 			obstacles.add(e);

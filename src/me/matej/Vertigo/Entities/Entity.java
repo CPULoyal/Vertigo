@@ -74,7 +74,7 @@ public class Entity {
 		return false;
 	}
 
-	public Vector getNonCollisionVector (Entity o) {
+	public Vector getNonCollisionVector (Entity o, Vector d) {
 		Vector v = new Vector();
 
 		double noOffsetX = o.loc.x;
@@ -85,21 +85,22 @@ public class Entity {
 
 		boolean colTop = false, colBottom = false, colLeft = false, colRight = false;
 
-		if (((loc.x > o.loc.x && loc.x < o.loc.x+o.size.w) || (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w)) && loc.y+size.h > o.loc.y && loc.y+size.h < o.loc.y+o.size.h) {
+		if (((loc.x > o.loc.x && loc.x < o.loc.x+o.size.w) || (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w)) && loc.y+size.h > o.loc.y && loc.y+size.h < o.loc.y+o.size.h && d.y != 0.0) {
 			loc.y = o.loc.y - size.h; // Bottom
 			colBottom = true;
-		} else if (((loc.x > o.loc.x && loc.x < o.loc.x+o.size.w) || (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w)) && loc.y > o.loc.y && loc.y < o.loc.y+o.size.h) {
+		}
+		if (((loc.x > o.loc.x && loc.x < o.loc.x+o.size.w) || (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w)) && loc.y > o.loc.y && loc.y < o.loc.y+o.size.h && d.y != 0.0) {
 			loc.y = o.loc.y + o.size.h; // Top
-
 			colTop = true;
 		}
 
-		if (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w && ((loc.y+size.h > o.loc.y && loc.y < o.loc.y) || (loc.y+size.h > o.loc.y+o.size.h && loc.y < o.loc.y+o.size.h))) {
+		if (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w && ((loc.y+size.h > o.loc.y && loc.y < o.loc.y) || (loc.y+size.h > o.loc.y+o.size.h && loc.y < o.loc.y+o.size.h)) && d.x != 0.0) {
 			loc.x = o.loc.x - size.w; // Right
 			colRight = true;
+			loc.y = oldLoc.y;
 		}
 
-		if (loc.x > o.loc.x && loc.x < o.loc.x+o.size.w && ((loc.y+size.h > o.loc.y && loc.y < o.loc.y) || (loc.y+size.h > o.loc.y+o.size.h && loc.y < o.loc.y+o.size.h))) {
+		if (loc.x > o.loc.x && loc.x < o.loc.x+o.size.w && ((loc.y+size.h > o.loc.y && loc.y < o.loc.y) || (loc.y+size.h > o.loc.y+o.size.h && loc.y < o.loc.y+o.size.h)) && d.x != 0.0) {
 			loc.x = o.loc.x+o.size.w; // Left
 			colLeft = true;
 		}

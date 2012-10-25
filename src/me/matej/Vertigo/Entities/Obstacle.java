@@ -33,12 +33,12 @@ public class Obstacle extends Entity {
 	}
 
 	@Override
-	public Vector getNonCollisionVector (Entity other) {
+	public Vector getNonCollisionVector (Entity other, Vector d) {
 		Vector origLoc = new Vector (loc.x, loc.y);
 		loc.x += xOffset;
-		Vector v = super.getNonCollisionVector(other);
+		Vector v = super.getNonCollisionVector(other, d);
 		loc = origLoc;
-		
+
 		return v;
 	}
 }

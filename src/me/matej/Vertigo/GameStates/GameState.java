@@ -31,7 +31,7 @@ public class GameState extends GameStateClass {
 
 	@Override
 	public void draw() {
-		Font f = Main.getInstance().getOpenGL().getFont();
+		Font f = Main.getOpenGL().getFont();
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		f.drawString(10, 10, "World Translated by X axis:"+xOffset, Color.black);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -51,6 +51,7 @@ public class GameState extends GameStateClass {
 	//private final double terminalJumpVelocity = 0.4; // Max velocity mario can ever achieve
 	//private final double jumpCooldownPeriod = 1.0;
 	//private double jumpYOffset;
+	private boolean gravityEnabled = true;
 
 	@Override
 	public void update(int delta) {
@@ -61,16 +62,38 @@ public class GameState extends GameStateClass {
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			mario.loc.y -= 0.2d * delta;
 			marioAttractedByGravity = false;
+
+			for (Obstacle o : obstacles) {
+				o.loc.x += o.xOffset;
+				if (((mario.loc.x > o.loc.x && mario.loc.x < o.loc.x+o.size.w) || (mario.loc.x+mario.size.w > o.loc.x && mario.loc.x+mario.size.w < o.loc.x+o.size.w)) && mario.loc.y > o.loc.y && mario.loc.y < o.loc.y+o.size.h)
+					mario.loc.y = o.loc.y + o.size.h; // Top
+				o.loc.x -= o.xOffset;
+			}
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			//mario.loc.y += 0.5d * delta;
+			mario.loc.y += 0.2d * delta;
+			for (Obstacle o : obstacles) {
+				o.loc.x += o.xOffset;
+				if (((mario.loc.x > o.loc.x && mario.loc.x < o.loc.x+o.size.w) || (mario.loc.x+mario.size.w > o.loc.x && mario.loc.x+mario.size.w < o.loc.x+o.size.w)) && mario.loc.y+mario.size.h > o.loc.y && mario.loc.y+mario.size.h < o.loc.y+o.size.h) {
+					mario.loc.y = o.loc.y - mario.size.h; // Bottom
+				}
+				o.loc.x -= o.xOffset;
+			}
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
 			mario.loc.x -= 0.2d * delta;
 			if (mario.loc.x < 15) {
 				mario.loc.x = 15;
 				xOffset += 0.2d * delta;
+			}
+
+			for (Obstacle o : obstacles) {
+				o.loc.x += o.xOffset;
+				if (mario.loc.x > o.loc.x && mario.loc.x < o.loc.x+o.size.w && ((mario.loc.y+mario.size.h > o.loc.y && mario.loc.y < o.loc.y) || (mario.loc.y+mario.size.h > o.loc.y+o.size.h && mario.loc.y < o.loc.y+o.size.h))) {
+					mario.loc.x = o.loc.x+o.size.w; // Left
+				}
+				o.loc.x -= o.xOffset;
 			}
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
@@ -80,21 +103,29 @@ public class GameState extends GameStateClass {
 				mario.loc.x = dw - 15 - mario.size.w;
 				xOffset -= 0.2d * delta;
 			}
+
+			for (Obstacle o : obstacles) {
+				o.loc.x += o.xOffset;
+				if (mario.loc.x+mario.size.w > o.loc.x && mario.loc.x+mario.size.w < o.loc.x+o.size.w && ((mario.loc.y+mario.size.h > o.loc.y && mario.loc.y < o.loc.y) || (mario.loc.y+mario.size.h > o.loc.y+o.size.h && mario.loc.y < o.loc.y+o.size.h))) {
+					mario.loc.x = o.loc.x - mario.size.w; // Right
+				}
+				o.loc.x -= o.xOffset;
+			}
 		}
 
-		if (marioAttractedByGravity) {
+		if (marioAttractedByGravity && gravityEnabled) {
 			mario.loc.y += gravity * delta;
+			for (Obstacle o : obstacles) {
+				o.loc.x += o.xOffset;
+				if (((mario.loc.x > o.loc.x && mario.loc.x < o.loc.x+o.size.w) || (mario.loc.x+mario.size.w > o.loc.x && mario.loc.x+mario.size.w < o.loc.x+o.size.w)) && mario.loc.y+mario.size.h > o.loc.y && mario.loc.y+mario.size.h < o.loc.y+o.size.h) {
+					mario.loc.y = o.loc.y - mario.size.h; // Bottom
+				}
+				o.loc.x -= o.xOffset;
+			}
 		}
 
 		for (Obstacle o : obstacles) {
 			o.xOffset = xOffset;
-
-			if (o.basicCollide(mario)) {
-				// Get collision info
-				// Reset to last-known non collision position
-
-				mario.getNonCollisionVector(o);
-			}
 		}
 	}
 
@@ -113,6 +144,8 @@ public class GameState extends GameStateClass {
 			this.init();
 			this.xOffset = 0;
 		}
+		if (key == Keyboard.KEY_G)
+			this.gravityEnabled = !this.gravityEnabled;
 	}
 
 	@Override
@@ -137,7 +170,7 @@ public class GameState extends GameStateClass {
 		obstacles = new ArrayList<>();
 
 		Obstacle[] ents = { new Obstacle(new Vector (0.0, OpenGL.getDisplayMode().getHeight()-100), new SizeVector(300.0, 100.0), 1, 0, 0),
-						new Obstacle(new Vector(300.0, OpenGL.getDisplayMode().getHeight()-50-143), new SizeVector(1000.0, 10.0), 1, 1, 0),
+						new Obstacle(new Vector(300.0, OpenGL.getDisplayMode().getHeight()-60-143), new SizeVector(1000.0, 10.0), 1, 1, 0),
 						new Obstacle(new Vector(300.0, OpenGL.getDisplayMode().getHeight()-50), new SizeVector(1000.0, 10.0), 1, 0, 0)
 
 		};

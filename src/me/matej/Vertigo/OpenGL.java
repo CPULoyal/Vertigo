@@ -77,7 +77,8 @@ final public class OpenGL {
 
 			this.updateFPS();
 			Display.update();
-			Display.sync(100);
+			if (!vsync)
+				Display.sync(60);
 		}
 
 		Display.destroy();
@@ -112,22 +113,27 @@ final public class OpenGL {
 
 			if (k == Keyboard.KEY_ESCAPE)
 				running = false;
-			/*
+			
 			else if (k == Keyboard.KEY_V) {
 				vsync = !vsync;
 
 				Display.setVSyncEnabled(vsync);
 			}
-			*/
+			
 			else if (k == Keyboard.KEY_F) { //  main.getState().Splash.done && false
 				fullscreen = !fullscreen;
 
 				try {
 					// Toggle fullscreen mode
-					if (fullscreen)
+					if (fullscreen) {
 						this.setDisplayMode(Display.getDesktopDisplayMode(), fullscreen);
-					else
+						vsync = true;
+						Display.setVSyncEnabled(vsync);
+					} else {
 						this.setDisplayMode(new DisplayMode(800, 600), fullscreen);
+						vsync = false;
+						Display.setVSyncEnabled(vsync);
+					}
 				} catch (LWJGLException e) {
 					e.printStackTrace(System.err);
 				}

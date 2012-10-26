@@ -14,7 +14,6 @@ import me.matej.Vertigo.Entities.*;
 import me.matej.Vertigo.Main;
 import me.matej.Vertigo.OpenGL;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
@@ -37,14 +36,16 @@ public class GameState extends GameStateClass {
 		Font f = Main.getOpenGL().getFont();
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		f.drawString(10, 10, "World Translated about X by "+(int)xOffset+"px", Color.black);
+		f.drawString(10, 40, Main.getOpenGL().getFps()+" FPS", Color.black);
+		f.drawString(10, 70, Main.getOpenGL().isVsync() ? "VSync ON" : "VSync OFF", Color.black);
 		if (bullets != null)
-			f.drawString(10, 30, "Bullets: "+bullets.size(), Color.black);
+			f.drawString(10, 100, "Bullets: "+bullets.size(), Color.black);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 
 		if (marioCollided) {
 			// Draw a red rectangle
 			GL11.glLoadIdentity();
-			GL11.glTranslated(10, 50, 0);
+			GL11.glTranslated(10, 130, 0);
 			GL11.glColor3f(1, 0, 0);
 			GL11.glBegin(GL11.GL_QUADS);
 			{
@@ -91,9 +92,7 @@ public class GameState extends GameStateClass {
 			marioAttractedByGravity = false;
 
 			for (Obstacle o : obstacles) {
-				o.loc.x += xOffset;
-				mario.checkAndFixTopCollision(o);
-				o.loc.x -= xOffset;
+				o.checkAndFixTopCollision(mario);
 			}
 		}
 
@@ -108,9 +107,7 @@ public class GameState extends GameStateClass {
 			}
 
 			for (Obstacle o : obstacles) {
-				o.loc.x += xOffset;
-				mario.checkAndFixLeftCollision(o);
-				o.loc.x -= xOffset;
+				o.checkAndFixLeftCollision(mario);
 			}
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_D) && !Keyboard.isKeyDown(Keyboard.KEY_A)) {
@@ -122,18 +119,14 @@ public class GameState extends GameStateClass {
 			}
 
 			for (Obstacle o : obstacles) {
-				o.loc.x += xOffset;
-				mario.checkAndFixRightCollision(o);
-				o.loc.x -= xOffset;
+				o.checkAndFixRightCollision(mario);
 			}
 		}
 
 		if (marioAttractedByGravity && gravityEnabled) {
 			mario.loc.y += gravity * delta;
 			for (Obstacle o : obstacles) {
-				o.loc.x += xOffset;
-				mario.checkAndFixBottomCollision(o);
-				o.loc.x -= xOffset;
+				o.checkAndFixBottomCollision(mario);
 			}
 		}
 
@@ -142,7 +135,7 @@ public class GameState extends GameStateClass {
 		}
 
 		if (bullets != null) {
-			ArrayList<Bullet> removeList = new ArrayList<>();
+			ArrayList<Bullet> removeList = new ArrayList<Bullet>();
 			for (Bullet b : bullets) {
 				b.update(delta);
 				DisplayMode dm = OpenGL.getDisplayMode();
@@ -181,11 +174,11 @@ public class GameState extends GameStateClass {
 	public void mouseButtonPressed(int index) {
 		// Make a bullet go in a random direction..
 		if (bullets == null) {
-			bullets = new ArrayList<>();
+			bullets = new ArrayList<Bullet>();
 		}
 		Bullet b = new Bullet();
 
-		b.loc = new Vector(mario.loc.x, mario.loc.y);
+		b.loc = new Vector(mario.loc.x+mario.size.w/2, mario.loc.y+mario.size.h/2);
 		b.r = (float)Math.random();
 		b.g = (float)Math.random();
 		b.b = (float)Math.random();
@@ -206,19 +199,19 @@ public class GameState extends GameStateClass {
 		// Load obstacles..
 		try {
 			loadObstacles();
-		} catch (JsonIOException | JsonSyntaxException | IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace(System.err);
 		} finally {
 			System.out.println("Obstacles loaded successfully.");
 		}
 
-		obstacles = new ArrayList<>();
+		obstacles = new ArrayList<Obstacle>();
 
 		Obstacle[] ents = { new Obstacle(new Vector (0.0, OpenGL.getDisplayMode().getHeight()-100), new SizeVector(300.0, 100.0), 1, 0, 0),
 						new Obstacle(new Vector(300.0, OpenGL.getDisplayMode().getHeight()-60-143), new SizeVector(90.0, 10.0), 1, 1, 0),
 						new Obstacle(new Vector(300.0, OpenGL.getDisplayMode().getHeight()-50), new SizeVector(1000.0, 10.0), 1, 0, 0),
-						new Obstacle(new Vector(0.0, 0.0), new SizeVector(OpenGL.getDisplayMode().getWidth(), 1), 1, 0, 0),
-						new Obstacle(new Vector(0.0, OpenGL.getDisplayMode().getHeight()-1), new SizeVector(OpenGL.getDisplayMode().getWidth(), 1), 1, 0, 0)
+						new Obstacle(new Vector(0.0, 0.0), new SizeVector(OpenGL.getDisplayMode().getWidth(), 1), 1, 0, 0, true),
+						new Obstacle(new Vector(0.0, OpenGL.getDisplayMode().getHeight()-1), new SizeVector(OpenGL.getDisplayMode().getWidth(), 1), 1, 0, 0, true)
 		};
 		obstacles.addAll(Arrays.asList(ents));
 	}

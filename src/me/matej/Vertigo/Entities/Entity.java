@@ -1,6 +1,8 @@
 package me.matej.Vertigo.Entities;
 
 import java.awt.Rectangle;
+import me.matej.Vertigo.GameStateEnum;
+import me.matej.Vertigo.GameStates.GameState;
 import me.matej.Vertigo.OpenGL;
 import org.lwjgl.opengl.GL11;
 
@@ -59,7 +61,7 @@ public class Entity {
 		}
 		GL11.glEnd();
 	}
-	public boolean basicCollide (Entity o) {
+	public boolean basicCollide (Entity o) { // TODO update this
 		if ((o.loc.x > loc.x && o.loc.x < loc.x+size.w && o.loc.y > loc.y && o.loc.y < loc.y+size.h) ||
 			(o.loc.x+o.size.w > loc.x && o.loc.x+o.size.w < loc.x+size.w && o.loc.y > loc.y && o.loc.y < loc.y+size.h) ||
 			(o.loc.x > loc.x && o.loc.x < loc.x+size.w && o.loc.y+o.size.h > loc.y && o.loc.y+o.size.h < loc.y+size.h) ||
@@ -74,42 +76,37 @@ public class Entity {
 		return false;
 	}
 
-	public Vector getNonCollisionVector (Entity o, Vector d) {
-		Vector v = new Vector();
-
-		double noOffsetX = o.loc.x;
-		Vector oldLoc = new Vector (loc.x, loc.y);
-
-		if (o instanceof Obstacle)
-			o.loc.x += ((Obstacle)o).xOffset;
-
-		boolean colTop = false, colBottom = false, colLeft = false, colRight = false;
-
-		if (((loc.x > o.loc.x && loc.x < o.loc.x+o.size.w) || (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w)) && loc.y+size.h > o.loc.y && loc.y+size.h < o.loc.y+o.size.h && d.y != 0.0) {
+	public void checkAndFixBottomCollision (Entity o) {
+		if (((loc.x > o.loc.x && loc.x < o.loc.x+o.size.w) || (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w) ||
+				(o.loc.x > loc.x && o.loc.x < loc.x+size.w) || (o.loc.x+o.size.w > loc.x && o.loc.x+o.size.w < loc.x+size.w)) &&
+				((loc.y+size.h > o.loc.y && loc.y+size.h < o.loc.y+o.size.h) || (o.loc.y > loc.y && o.loc.y < loc.y+size.h))) {
 			loc.y = o.loc.y - size.h; // Bottom
-			colBottom = true;
+			((GameState)GameStateEnum.Game.getStateInstance()).marioCollided = true;
 		}
-		if (((loc.x > o.loc.x && loc.x < o.loc.x+o.size.w) || (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w)) && loc.y > o.loc.y && loc.y < o.loc.y+o.size.h && d.y != 0.0) {
+	}
+	public void checkAndFixTopCollision (Entity o) {
+		if (((loc.x > o.loc.x && loc.x < o.loc.x+o.size.w) || (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w) ||
+				(o.loc.x > loc.x && o.loc.x < loc.x+size.w) || (o.loc.x+o.size.w > loc.x && o.loc.x+o.size.w < loc.x+size.w)) &&
+				((loc.y > o.loc.y && loc.y < o.loc.y+o.size.h) || (o.loc.y+o.size.h > loc.y && o.loc.y+o.size.h < loc.y+size.h))) {
 			loc.y = o.loc.y + o.size.h; // Top
-			colTop = true;
+			((GameState)GameStateEnum.Game.getStateInstance()).marioCollided = true;
 		}
-
-		if (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w && ((loc.y+size.h > o.loc.y && loc.y < o.loc.y) || (loc.y+size.h > o.loc.y+o.size.h && loc.y < o.loc.y+o.size.h)) && d.x != 0.0) {
-			loc.x = o.loc.x - size.w; // Right
-			colRight = true;
-			loc.y = oldLoc.y;
-		}
-
-		if (loc.x > o.loc.x && loc.x < o.loc.x+o.size.w && ((loc.y+size.h > o.loc.y && loc.y < o.loc.y) || (loc.y+size.h > o.loc.y+o.size.h && loc.y < o.loc.y+o.size.h)) && d.x != 0.0) {
+	}
+	public void checkAndFixLeftCollision (Entity o) {
+		if (loc.x > o.loc.x && loc.x < o.loc.x+o.size.w &&
+				((loc.y+size.h > o.loc.y && loc.y < o.loc.y) || (loc.y+size.h > o.loc.y+o.size.h && loc.y < o.loc.y+o.size.h) ||
+				(o.loc.y+o.size.h > loc.y+size.h && o.loc.y < loc.y+size.h) || (o.loc.y+o.size.h > loc.y && o.loc.y < loc.y))) {
 			loc.x = o.loc.x+o.size.w; // Left
-			colLeft = true;
+			((GameState)GameStateEnum.Game.getStateInstance()).marioCollided = true;
 		}
-
-		if (o instanceof Obstacle) {
-			o.loc.x = noOffsetX;
+	}
+	public void checkAndFixRightCollision (Entity o) {
+		if (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w &&
+				((loc.y+size.h > o.loc.y && loc.y < o.loc.y) || (loc.y+size.h > o.loc.y+o.size.h && loc.y < o.loc.y+o.size.h) ||
+				(o.loc.y+o.size.h > loc.y+size.h && o.loc.y < loc.y+size.h) || (o.loc.y+o.size.h > loc.y && o.loc.y < loc.y))) {
+			loc.x = o.loc.x - size.w; // Right
+			((GameState)GameStateEnum.Game.getStateInstance()).marioCollided = true;
 		}
-
-		return v;
 	}
 
 	public Entity () {

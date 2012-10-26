@@ -9,6 +9,7 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import me.matej.Vertigo.Entities.*;
 import me.matej.Vertigo.Main;
 import me.matej.Vertigo.OpenGL;
@@ -28,13 +29,29 @@ public class GameState extends GameStateClass {
 	private ArrayList<Obstacle> obstacles;
 
 	public double xOffset;
+	public boolean marioCollided = false;
 
 	@Override
 	public void draw() {
 		Font f = Main.getOpenGL().getFont();
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		f.drawString(10, 10, "World Translated by X axis:"+xOffset, Color.black);
+		f.drawString(10, 10, "World Translated about X by "+(int)xOffset+"px", Color.black);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
+
+		if (marioCollided) {
+			// Draw a red rectangle
+			GL11.glLoadIdentity();
+			GL11.glTranslated(10, 50, 0);
+			GL11.glColor3f(1, 0, 0);
+			GL11.glBegin(GL11.GL_QUADS);
+			{
+				GL11.glVertex2f(0, 0);
+				GL11.glVertex2f(20, 0);
+				GL11.glVertex2f(20, 20);
+				GL11.glVertex2f(0, 20);
+			}
+			GL11.glEnd();
+		}
 
 		mario.draw();
 		if (obstacles != null) {
@@ -58,69 +75,56 @@ public class GameState extends GameStateClass {
 		Vector oldLoc = new Vector(mario.loc.x, mario.loc.y);
 
 		boolean marioAttractedByGravity = true;
+		marioCollided = false;
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			mario.loc.y -= 0.2d * delta;
 			marioAttractedByGravity = false;
 
 			for (Obstacle o : obstacles) {
-				o.loc.x += o.xOffset;
-				if (((mario.loc.x > o.loc.x && mario.loc.x < o.loc.x+o.size.w) || (mario.loc.x+mario.size.w > o.loc.x && mario.loc.x+mario.size.w < o.loc.x+o.size.w)) && mario.loc.y > o.loc.y && mario.loc.y < o.loc.y+o.size.h)
-					mario.loc.y = o.loc.y + o.size.h; // Top
-				o.loc.x -= o.xOffset;
+				o.loc.x += xOffset;
+				mario.checkAndFixTopCollision(o);
+				o.loc.x -= xOffset;
 			}
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			mario.loc.y += 0.2d * delta;
-			for (Obstacle o : obstacles) {
-				o.loc.x += o.xOffset;
-				if (((mario.loc.x > o.loc.x && mario.loc.x < o.loc.x+o.size.w) || (mario.loc.x+mario.size.w > o.loc.x && mario.loc.x+mario.size.w < o.loc.x+o.size.w)) && mario.loc.y+mario.size.h > o.loc.y && mario.loc.y+mario.size.h < o.loc.y+o.size.h) {
-					mario.loc.y = o.loc.y - mario.size.h; // Bottom
-				}
-				o.loc.x -= o.xOffset;
-			}
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_A) && !Keyboard.isKeyDown(Keyboard.KEY_D)) {
 			mario.loc.x -= 0.2d * delta;
-			if (mario.loc.x < 15) {
-				mario.loc.x = 15;
+			if (mario.loc.x < 50) {
+				mario.loc.x = 50;
 				xOffset += 0.2d * delta;
 			}
 
 			for (Obstacle o : obstacles) {
-				o.loc.x += o.xOffset;
-				if (mario.loc.x > o.loc.x && mario.loc.x < o.loc.x+o.size.w && ((mario.loc.y+mario.size.h > o.loc.y && mario.loc.y < o.loc.y) || (mario.loc.y+mario.size.h > o.loc.y+o.size.h && mario.loc.y < o.loc.y+o.size.h))) {
-					mario.loc.x = o.loc.x+o.size.w; // Left
-				}
-				o.loc.x -= o.xOffset;
+				o.loc.x += xOffset;
+				mario.checkAndFixLeftCollision(o);
+				o.loc.x -= xOffset;
 			}
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_D) && !Keyboard.isKeyDown(Keyboard.KEY_A)) {
 			mario.loc.x += 0.2d * delta;
 			double dw = OpenGL.getDisplayMode().getWidth();
-			if (mario.loc.x+mario.size.w+15 > dw) {
-				mario.loc.x = dw - 15 - mario.size.w;
+			if (mario.loc.x+mario.size.w+50 > dw) {
+				mario.loc.x = dw - 50 - mario.size.w;
 				xOffset -= 0.2d * delta;
 			}
 
 			for (Obstacle o : obstacles) {
-				o.loc.x += o.xOffset;
-				if (mario.loc.x+mario.size.w > o.loc.x && mario.loc.x+mario.size.w < o.loc.x+o.size.w && ((mario.loc.y+mario.size.h > o.loc.y && mario.loc.y < o.loc.y) || (mario.loc.y+mario.size.h > o.loc.y+o.size.h && mario.loc.y < o.loc.y+o.size.h))) {
-					mario.loc.x = o.loc.x - mario.size.w; // Right
-				}
-				o.loc.x -= o.xOffset;
+				o.loc.x += xOffset;
+				mario.checkAndFixRightCollision(o);
+				o.loc.x -= xOffset;
 			}
 		}
 
 		if (marioAttractedByGravity && gravityEnabled) {
 			mario.loc.y += gravity * delta;
 			for (Obstacle o : obstacles) {
-				o.loc.x += o.xOffset;
-				if (((mario.loc.x > o.loc.x && mario.loc.x < o.loc.x+o.size.w) || (mario.loc.x+mario.size.w > o.loc.x && mario.loc.x+mario.size.w < o.loc.x+o.size.w)) && mario.loc.y+mario.size.h > o.loc.y && mario.loc.y+mario.size.h < o.loc.y+o.size.h) {
-					mario.loc.y = o.loc.y - mario.size.h; // Bottom
-				}
-				o.loc.x -= o.xOffset;
+				o.loc.x += xOffset;
+				mario.checkAndFixBottomCollision(o);
+				o.loc.x -= xOffset;
 			}
 		}
 
@@ -156,7 +160,7 @@ public class GameState extends GameStateClass {
 	@Override
 	public void init() {
 		// Load mario
-		mario = new Mario(new Vector(10, 10), new SizeVector(100, 133));
+		mario = new Mario(new Vector(50, 10), new SizeVector(100, 133));
 
 		// Load obstacles..
 		try {
@@ -170,20 +174,16 @@ public class GameState extends GameStateClass {
 		obstacles = new ArrayList<>();
 
 		Obstacle[] ents = { new Obstacle(new Vector (0.0, OpenGL.getDisplayMode().getHeight()-100), new SizeVector(300.0, 100.0), 1, 0, 0),
-						new Obstacle(new Vector(300.0, OpenGL.getDisplayMode().getHeight()-60-143), new SizeVector(1000.0, 10.0), 1, 1, 0),
+						new Obstacle(new Vector(300.0, OpenGL.getDisplayMode().getHeight()-60-143), new SizeVector(90.0, 10.0), 1, 1, 0),
 						new Obstacle(new Vector(300.0, OpenGL.getDisplayMode().getHeight()-50), new SizeVector(1000.0, 10.0), 1, 0, 0)
 
 		};
-		for (Obstacle e : ents) {
-			obstacles.add(e);
-		}
+		obstacles.addAll(Arrays.asList(ents));
 	}
 
 	@Override
 	public void displayModeChanged(DisplayMode newDisplayMode) {
-		for (Obstacle o : obstacles) {
-			o.loc.y = newDisplayMode.getHeight() - o.size.h;
-		}
+		this.init();
 	}
 
 	private static String relObstaclesLoc = "/me/matej/Vertigo/resources/Obstacles.json";

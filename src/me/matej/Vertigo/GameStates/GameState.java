@@ -14,6 +14,7 @@ import me.matej.Vertigo.Entities.*;
 import me.matej.Vertigo.Main;
 import me.matej.Vertigo.OpenGL;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
@@ -36,6 +37,8 @@ public class GameState extends GameStateClass {
 		Font f = Main.getOpenGL().getFont();
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		f.drawString(10, 10, "World Translated about X by "+(int)xOffset+"px", Color.black);
+		if (bullets != null)
+			f.drawString(10, 30, "Bullets: "+bullets.size(), Color.black);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 
 		if (marioCollided) {
@@ -58,6 +61,12 @@ public class GameState extends GameStateClass {
 			for(Obstacle e : obstacles) {
 				if (e != null)
 					e.draw();
+			}
+		}
+		if (bullets != null) {
+			for(Bullet b : bullets) {
+				if (b != null)
+					b.draw();
 			}
 		}
 	}
@@ -131,6 +140,20 @@ public class GameState extends GameStateClass {
 		for (Obstacle o : obstacles) {
 			o.xOffset = xOffset;
 		}
+
+		if (bullets != null) {
+			ArrayList<Bullet> removeList = new ArrayList<>();
+			for (Bullet b : bullets) {
+				b.update(delta);
+				DisplayMode dm = OpenGL.getDisplayMode();
+				int w = dm.getWidth(), h = dm.getHeight();
+				if (b.loc.x+b.size.w > w || b.loc.x < -b.size.w || b.loc.y+b.size.h > h || b.loc.y < -b.size.h) {
+					// Remove bullet from stack
+					removeList.add(b);
+				}
+			}
+			bullets.removeAll(removeList);
+		}
 	}
 
 	@Override
@@ -152,9 +175,27 @@ public class GameState extends GameStateClass {
 			this.gravityEnabled = !this.gravityEnabled;
 	}
 
+	ArrayList<Bullet> bullets;
+
 	@Override
 	public void mouseButtonPressed(int index) {
+		// Make a bullet go in a random direction..
+		if (bullets == null) {
+			bullets = new ArrayList<>();
+		}
+		Bullet b = new Bullet();
 
+		b.loc = new Vector(mario.loc.x, mario.loc.y);
+		b.r = (float)Math.random();
+		b.g = (float)Math.random();
+		b.b = (float)Math.random();
+		b.a = 1;
+		b.size = new SizeVector(10, 10);
+		double x = Math.random();
+		double y = Math.random();
+		b.dir = new Vector(x < 0.5 ? x : -x, y < 0.5 ? y : -y);
+
+		bullets.add(b);
 	}
 
 	@Override

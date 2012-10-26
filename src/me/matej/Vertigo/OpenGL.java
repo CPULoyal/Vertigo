@@ -16,8 +16,8 @@ import org.newdawn.slick.TrueTypeFont;
  */
 final public class OpenGL {
 	private long lastFrame; // UNIX Time at last frame
-	private int fps; // Frames per Second
-	private int FPS;
+	private int fps; // Current Frames per Second
+	private int FPS; // Frames in the last Second
 	private long lastFPS; // Last UNIX Time FPS was refreshed
 	private boolean vsync = true; // VSync enabled/disabled
 	private boolean fullscreen = false; // Fullscreen switch

@@ -14,6 +14,7 @@ import me.matej.Vertigo.Entities.*;
 import me.matej.Vertigo.Main;
 import me.matej.Vertigo.OpenGL;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
@@ -37,7 +38,7 @@ public class GameState extends GameStateClass {
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		f.drawString(10, 10, "World Translated about X by "+(int)xOffset+"px", Color.black);
 		f.drawString(10, 40, Main.getOpenGL().getFps()+" FPS", Color.black);
-		f.drawString(10, 70, Main.getOpenGL().isVsync() ? "VSync ON" : "VSync OFF", Color.black);
+		f.drawString(10, 70, "VSync is " + (Main.getOpenGL().isVsync() ? "ON" : "OFF"), Color.black);
 		if (bullets != null)
 			f.drawString(10, 100, "Bullets: "+bullets.size(), Color.black);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -133,7 +134,7 @@ public class GameState extends GameStateClass {
 		for (Obstacle o : obstacles) {
 			o.xOffset = xOffset;
 		}
-
+		
 		if (bullets != null) {
 			ArrayList<Bullet> removeList = new ArrayList<Bullet>();
 			for (Bullet b : bullets) {
@@ -148,7 +149,7 @@ public class GameState extends GameStateClass {
 			bullets.removeAll(removeList);
 		}
 	}
-
+	
 	@Override
 	public void keyPressed(int key) {
 		if (key == Keyboard.KEY_F3) {
@@ -176,19 +177,49 @@ public class GameState extends GameStateClass {
 		if (bullets == null) {
 			bullets = new ArrayList<Bullet>();
 		}
-		Bullet b = new Bullet();
+		
+		if (index == 1) {
+			Bullet b = new Bullet();
 
-		b.loc = new Vector(mario.loc.x+mario.size.w/2, mario.loc.y+mario.size.h/2);
-		b.r = (float)Math.random();
-		b.g = (float)Math.random();
-		b.b = (float)Math.random();
-		b.a = 1;
-		b.size = new SizeVector(10, 10);
-		double x = Math.random();
-		double y = Math.random();
-		b.dir = new Vector(x < 0.5 ? x : -x, y < 0.5 ? y : -y);
+			b.loc = new Vector(mario.loc.x+mario.size.w/2, mario.loc.y+mario.size.h/2);
+			b.r = (float)Math.random();
+			b.g = (float)Math.random();
+			b.b = (float)Math.random();
+			b.a = 1;
+			b.size = new SizeVector(10, 10);
+			double x = Math.random();
+			double y = Math.random();
+			b.dir = new Vector(x < 0.5 ? x : -x, y < 0.5 ? y : -y);
 
-		bullets.add(b);
+			bullets.add(b);
+		} else {
+			int mx = Mouse.getX()-10, my = OpenGL.getDisplayMode().getHeight() - Mouse.getY()-10;
+			
+			double xDiff = mx - (mario.loc.x+mario.size.w/2-10), yDiff = my - (mario.loc.y+mario.size.h/2-10);
+			
+			float actual = (float)Math.abs(Math.toDegrees(Math.atan(yDiff / xDiff)));
+
+			if (xDiff > 0f && yDiff < 0f)
+				actual = 360f - actual;
+			else if (xDiff < 0f && yDiff < 0f)
+				actual += 180f;
+			else if (xDiff < 0f && yDiff > 0f)
+				actual = 90f + (90f - actual);
+
+			double dx = Math.cos(Math.toRadians(actual)), dy = Math.sin(Math.toRadians(actual));
+			
+			Bullet b = new Bullet();
+			
+			b.loc = new Vector(mario.loc.x+mario.size.w/2-10, mario.loc.y+mario.size.h/2-10);
+			b.r = 0f;
+			b.g = 1f;
+			b.b = 0f;
+			b.a = 1;
+			b.size = new SizeVector(20, 20);
+			b.dir = new Vector(dx, dy);
+			
+			bullets.add(b);
+		}
 	}
 
 	@Override

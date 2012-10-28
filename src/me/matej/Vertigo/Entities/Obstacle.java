@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11;
 public class Obstacle extends Entity {
 	public double xOffset;
 	public boolean sticky;
+	//collidesWithOthers...
 	
 	public Obstacle (Vector v, SizeVector s, float r, float g, float b, boolean sticky) {
 		this(v, s, r, g, b);

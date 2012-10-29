@@ -39,8 +39,8 @@ public class GameState extends GameStateClass {
 		f.drawString(10, 10, "World Translated about X by "+(int)xOffset+"px", Color.black);
 		f.drawString(10, 40, Main.getOpenGL().getFps()+" FPS", Color.black);
 		f.drawString(10, 70, "VSync is " + (Main.getOpenGL().isVsync() ? "ON" : "OFF"), Color.black);
-		if (bullets != null)
-			f.drawString(10, 100, "Bullets: "+bullets.size(), Color.black);
+		if (getBullets() != null)
+			f.drawString(10, 100, "Bullets: "+getBullets().size(), Color.black);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 
 		if (marioCollided) {
@@ -58,15 +58,15 @@ public class GameState extends GameStateClass {
 			GL11.glEnd();
 		}
 
-		mario.draw();
-		if (obstacles != null) {
-			for(Obstacle e : obstacles) {
+		getMario().draw();
+		if (getObstacles() != null) {
+			for(Obstacle e : getObstacles()) {
 				if (e != null)
 					e.draw();
 			}
 		}
-		if (bullets != null) {
-			for(Bullet b : bullets) {
+		if (getBullets() != null) {
+			for(Bullet b : getBullets()) {
 				if (b != null)
 					b.draw();
 			}
@@ -83,7 +83,7 @@ public class GameState extends GameStateClass {
 
 	@Override
 	public void update(int delta) {
-		Vector oldLoc = new Vector(mario.loc.x, mario.loc.y);
+		Vector oldLoc = new Vector(getMario().loc.x, getMario().loc.y);
 
 		boolean marioAttractedByGravity = true;
 		marioCollided = false;
@@ -92,8 +92,8 @@ public class GameState extends GameStateClass {
 			mario.loc.y -= 0.2d * delta;
 			marioAttractedByGravity = false;
 
-			for (Obstacle o : obstacles) {
-				o.checkAndFixTopCollision(mario);
+			for (Obstacle o : getObstacles()) {
+				o.checkAndFixTopCollision(getMario());
 			}
 		}
 
@@ -102,42 +102,42 @@ public class GameState extends GameStateClass {
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_A) && !Keyboard.isKeyDown(Keyboard.KEY_D)) {
 			mario.loc.x -= 0.2d * delta;
-			if (mario.loc.x < 50) {
+			if (getMario().loc.x < 50) {
 				mario.loc.x = 50;
 				xOffset += 0.2d * delta;
 			}
 
-			for (Obstacle o : obstacles) {
-				o.checkAndFixLeftCollision(mario);
+			for (Obstacle o : getObstacles()) {
+				o.checkAndFixLeftCollision(getMario());
 			}
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_D) && !Keyboard.isKeyDown(Keyboard.KEY_A)) {
 			mario.loc.x += 0.2d * delta;
 			double dw = OpenGL.getDisplayMode().getWidth();
-			if (mario.loc.x+mario.size.w+50 > dw) {
-				mario.loc.x = dw - 50 - mario.size.w;
+			if (getMario().loc.x+getMario().size.w+50 > dw) {
+				mario.loc.x = dw - 50 - getMario().size.w;
 				xOffset -= 0.2d * delta;
 			}
 
-			for (Obstacle o : obstacles) {
-				o.checkAndFixRightCollision(mario);
+			for (Obstacle o : getObstacles()) {
+				o.checkAndFixRightCollision(getMario());
 			}
 		}
 
 		if (marioAttractedByGravity && gravityEnabled) {
 			mario.loc.y += gravity * delta;
-			for (Obstacle o : obstacles) {
-				o.checkAndFixBottomCollision(mario);
+			for (Obstacle o : getObstacles()) {
+				o.checkAndFixBottomCollision(getMario());
 			}
 		}
 
-		for (Obstacle o : obstacles) {
+		for (Obstacle o : getObstacles()) {
 			o.xOffset = xOffset;
 		}
 		
-		if (bullets != null) {
+		if (getBullets() != null) {
 			ArrayList<Bullet> removeList = new ArrayList<Bullet>();
-			for (Bullet b : bullets) {
+			for (Bullet b : getBullets()) {
 				b.update(delta);
 				DisplayMode dm = OpenGL.getDisplayMode();
 				int w = dm.getWidth(), h = dm.getHeight();
@@ -146,7 +146,7 @@ public class GameState extends GameStateClass {
 					removeList.add(b);
 				}
 			}
-			bullets.removeAll(removeList);
+			getBullets().removeAll(removeList);
 		}
 	}
 	
@@ -169,19 +169,21 @@ public class GameState extends GameStateClass {
 			this.gravityEnabled = !this.gravityEnabled;
 	}
 
-	ArrayList<Bullet> bullets;
+	private ArrayList<Bullet> bullets;
 
 	@Override
 	public void mouseButtonPressed(int index) {
 		// Make a bullet go in a random direction..
-		if (bullets == null) {
+		if (getBullets() == null) {
 			bullets = new ArrayList<Bullet>();
 		}
 		
-		if (index == 1) {
+		DisplayMode dm = OpenGL.getDisplayMode();
+		
+		if (index == 0) {
 			Bullet b = new Bullet();
 
-			b.loc = new Vector(mario.loc.x+mario.size.w/2, mario.loc.y+mario.size.h/2);
+			b.loc = new Vector(dm.getWidth()/2-5, dm.getHeight()/2-5);
 			b.r = (float)Math.random();
 			b.g = (float)Math.random();
 			b.b = (float)Math.random();
@@ -191,11 +193,12 @@ public class GameState extends GameStateClass {
 			double y = Math.random();
 			b.dir = new Vector(x < 0.5 ? x : -x, y < 0.5 ? y : -y);
 
-			bullets.add(b);
+			getBullets().add(b);
 		} else {
-			int mx = Mouse.getX()-10, my = OpenGL.getDisplayMode().getHeight() - Mouse.getY()-10;
+			int mx = Mouse.getX()-10, my = dm.getHeight() - Mouse.getY()-10;
+			int x = dm.getWidth()/2-10, y = dm.getHeight()/2-10;
 			
-			double xDiff = mx - (mario.loc.x+mario.size.w/2-10), yDiff = my - (mario.loc.y+mario.size.h/2-10);
+			double xDiff = mx - x, yDiff = my - y;
 			
 			float actual = (float)Math.abs(Math.toDegrees(Math.atan(yDiff / xDiff)));
 
@@ -210,7 +213,7 @@ public class GameState extends GameStateClass {
 			
 			Bullet b = new Bullet();
 			
-			b.loc = new Vector(mario.loc.x+mario.size.w/2-10, mario.loc.y+mario.size.h/2-10);
+			b.loc = new Vector(x, y);
 			b.r = 0f;
 			b.g = 1f;
 			b.b = 0f;
@@ -218,7 +221,7 @@ public class GameState extends GameStateClass {
 			b.size = new SizeVector(20, 20);
 			b.dir = new Vector(dx, dy);
 			
-			bullets.add(b);
+			getBullets().add(b);
 		}
 	}
 
@@ -244,7 +247,7 @@ public class GameState extends GameStateClass {
 						new Obstacle(new Vector(0.0, 0.0), new SizeVector(OpenGL.getDisplayMode().getWidth(), 1), 1, 0, 0, true),
 						new Obstacle(new Vector(0.0, OpenGL.getDisplayMode().getHeight()-1), new SizeVector(OpenGL.getDisplayMode().getWidth(), 1), 1, 0, 0, true)
 		};
-		obstacles.addAll(Arrays.asList(ents));
+		getObstacles().addAll(Arrays.asList(ents));
 	}
 
 	@Override
@@ -271,7 +274,28 @@ public class GameState extends GameStateClass {
 		String path = url.getFile();
 
 		PrintWriter pw = new PrintWriter (new FileWriter(new File(path)));
-		pw.print(new Gson().toJson(obstacles));
+		pw.print(new Gson().toJson(getObstacles()));
 		pw.close();
+	}
+
+	/**
+	 * @return the mario
+	 */
+	public Mario getMario() {
+		return mario;
+	}
+
+	/**
+	 * @return the obstacles
+	 */
+	public ArrayList<Obstacle> getObstacles() {
+		return obstacles;
+	}
+
+	/**
+	 * @return the bullets
+	 */
+	public ArrayList<Bullet> getBullets() {
+		return bullets;
 	}
 }

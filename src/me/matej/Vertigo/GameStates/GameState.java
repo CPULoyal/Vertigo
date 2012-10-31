@@ -13,6 +13,7 @@ import java.util.Arrays;
 import me.matej.Vertigo.Entities.*;
 import me.matej.Vertigo.Main;
 import me.matej.Vertigo.OpenGL;
+import me.matej.Vertigo.SoundManager;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.DisplayMode;
@@ -167,6 +168,10 @@ public class GameState extends GameStateClass {
 		}
 		if (key == Keyboard.KEY_G)
 			this.gravityEnabled = !this.gravityEnabled;
+		if (key == Keyboard.KEY_Q) {
+			SoundManager sm = SoundManager.getSingleton();
+			sm.getExplosion().playAsSoundEffect(1.0f, 1.0f, false);
+		}
 	}
 
 	private ArrayList<Bullet> bullets;

@@ -3,6 +3,7 @@ package me.matej.Vertigo.Entities;
 import java.util.ArrayList;
 import me.matej.Vertigo.GameStateEnum;
 import me.matej.Vertigo.GameStates.GameState;
+import me.matej.Vertigo.SoundManager;
 
 /**
  *
@@ -23,6 +24,8 @@ public class Bullet extends Entity {
 			for (Obstacle o : obstacles) {
 				if (o.basicCollide(this)) {
 					didCollide = true;
+					SoundManager sm = SoundManager.getSingleton();
+					sm.getExplosion().playAsSoundEffect((float)Math.random()*2, 1f, false);
 					break;
 				}
 			}

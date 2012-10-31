@@ -5,6 +5,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
@@ -25,6 +26,7 @@ final public class OpenGL {
 	private static DisplayMode displayMode; // Current display mode
 	private TrueTypeFont font; // Font used to display text
 	private Main main = Main.getInstance();
+	private SoundManager soundManager = SoundManager.getSingleton();
 
 	private boolean setupComplete = false;
 
@@ -82,6 +84,7 @@ final public class OpenGL {
 		}
 
 		Display.destroy();
+		AL.destroy();
 	}
 
 	private void initGL () {
@@ -160,6 +163,7 @@ final public class OpenGL {
 		}
 
 		main.update (delta);
+		soundManager.update(delta);
 	}
 
 	private void drawGL () {

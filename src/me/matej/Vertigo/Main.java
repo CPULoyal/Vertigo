@@ -1,5 +1,6 @@
 package me.matej.Vertigo;
 
+import java.io.IOException;
 import org.lwjgl.opengl.DisplayMode;
 
 /**
@@ -25,7 +26,13 @@ public class Main {
 
 	private void run () {
 		openGL = new OpenGL();
-
+		
+		try {
+			SoundManager.getSingleton().loadExplosion();
+		} catch (IOException e) {
+			e.printStackTrace(System.err);
+		}
+		
 		//GameState.Splash.getStateInstance().init();
 		//GameState.Splash.getStateInstance().active = true;
 

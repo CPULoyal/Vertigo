@@ -87,10 +87,9 @@ public class GameState extends GameStateClass {
 		if (key == Keyboard.KEY_F3) {
 		    try {
 				this.saveObstacles();
+				System.out.println("Saved obstacles..");
 		    } catch (Exception e) {
 				e.printStackTrace(System.err);
-		    } finally {
-				System.out.println("Saved obstacles..");
 		    }
 		} else if (key == Keyboard.KEY_R) {
 			this.init();

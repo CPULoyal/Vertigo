@@ -155,6 +155,7 @@ public class Mario extends TexturedEntity {
 						jumpAngle = 90;
 						falling = true;
 						marioAttractedByGravity = true;
+						jumpVelocity = 0;
 					}
 				}
 			}
@@ -163,7 +164,7 @@ public class Mario extends TexturedEntity {
 
 	public void affectHealth (double diff) {
 		health += diff;
-		
+
 		if (health < 0) {
 			game.keyPressed(Keyboard.KEY_R); // Reset
 		}

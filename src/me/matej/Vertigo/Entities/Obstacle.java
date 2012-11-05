@@ -33,11 +33,15 @@ public class Obstacle extends Entity {
 
 	@Override
 	public boolean touchesEntity (Entity o) {
-		loc.x += xOffset;
-		boolean touch = super.touchesEntity(o);
-		loc.x -= xOffset;
+		if (sticky) {
+			return super.basicCollide(o);
+		} else {
+			loc.x += xOffset;
+			boolean touch = super.touchesEntity(o);
+			loc.x -= xOffset;
 
-		return touch;
+			return touch;
+		}
 	}
 
 	@Override

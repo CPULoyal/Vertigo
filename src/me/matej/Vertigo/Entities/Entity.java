@@ -61,6 +61,22 @@ public class Entity {
 		}
 		GL11.glEnd();
 	}
+
+	public boolean touchesEntity (Entity o) {
+		if ((o.loc.x >= loc.x && o.loc.x <= loc.x+size.w && o.loc.y >= loc.y && o.loc.y <= loc.y+size.h) ||
+			(o.loc.x+o.size.w >= loc.x && o.loc.x+o.size.w <= loc.x+size.w && o.loc.y >= loc.y && o.loc.y <= loc.y+size.h) ||
+			(o.loc.x >= loc.x && o.loc.x <= loc.x+size.w && o.loc.y+o.size.h >= loc.y && o.loc.y+o.size.h <= loc.y+size.h) ||
+			(o.loc.x+o.size.w >= loc.x && o.loc.x+o.size.w <= loc.x+size.w && o.loc.y+o.size.w >= loc.y && o.loc.y+o.size.h <= loc.y+size.h) ||
+			(loc.x >= o.loc.x && loc.x <= o.loc.x+o.size.w && loc.y >= o.loc.y && loc.y <= o.loc.y+o.size.h) ||
+			(loc.x+size.w >= o.loc.x && loc.x+size.w <= o.loc.x+o.size.w && loc.y >= o.loc.y && loc.y <= o.loc.y+o.size.h) ||
+			(loc.x >= o.loc.x && loc.x <= o.loc.x+o.size.w && loc.y+size.h >= o.loc.y && loc.y+size.h <= o.loc.y+o.size.h) ||
+			(loc.x+size.w >= o.loc.x && loc.x+size.w <= o.loc.x+o.size.w && loc.y+size.h >= o.loc.y && loc.y+size.h <= o.loc.y+o.size.h)) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public boolean basicCollide (Entity o) { // TODO update this
 		if ((o.loc.x > loc.x && o.loc.x < loc.x+size.w && o.loc.y > loc.y && o.loc.y < loc.y+size.h) ||
 			(o.loc.x+o.size.w > loc.x && o.loc.x+o.size.w < loc.x+size.w && o.loc.y > loc.y && o.loc.y < loc.y+size.h) ||
@@ -76,37 +92,49 @@ public class Entity {
 		return false;
 	}
 
-	public void checkAndFixBottomCollision (Entity o) {
+	public boolean checkAndFixBottomCollision (Entity o) {
 		if (((loc.x > o.loc.x && loc.x < o.loc.x+o.size.w) || (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w) ||
 				(o.loc.x > loc.x && o.loc.x < loc.x+size.w) || (o.loc.x+o.size.w > loc.x && o.loc.x+o.size.w < loc.x+size.w)) &&
 				((loc.y+size.h > o.loc.y && loc.y+size.h < o.loc.y+o.size.h) || (o.loc.y > loc.y && o.loc.y < loc.y+size.h))) {
 			loc.y = o.loc.y - size.h; // Bottom
-			((GameState)GameStateEnum.Game.getStateInstance()).marioCollided = true;
+
+			return true;
 		}
+
+		return false;
 	}
-	public void checkAndFixTopCollision (Entity o) {
+	public boolean checkAndFixTopCollision (Entity o) {
 		if (((loc.x > o.loc.x && loc.x < o.loc.x+o.size.w) || (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w) ||
 				(o.loc.x > loc.x && o.loc.x < loc.x+size.w) || (o.loc.x+o.size.w > loc.x && o.loc.x+o.size.w < loc.x+size.w)) &&
 				((loc.y > o.loc.y && loc.y < o.loc.y+o.size.h) || (o.loc.y+o.size.h > loc.y && o.loc.y+o.size.h < loc.y+size.h))) {
 			loc.y = o.loc.y + o.size.h; // Top
-			((GameState)GameStateEnum.Game.getStateInstance()).marioCollided = true;
+
+			return true;
 		}
+
+		return false;
 	}
-	public void checkAndFixLeftCollision (Entity o) {
+	public boolean checkAndFixLeftCollision (Entity o) {
 		if (loc.x > o.loc.x && loc.x < o.loc.x+o.size.w &&
 				((loc.y+size.h > o.loc.y && loc.y < o.loc.y) || (loc.y+size.h > o.loc.y+o.size.h && loc.y < o.loc.y+o.size.h) ||
 				(o.loc.y+o.size.h > loc.y+size.h && o.loc.y < loc.y+size.h) || (o.loc.y+o.size.h > loc.y && o.loc.y < loc.y))) {
 			loc.x = o.loc.x+o.size.w; // Left
-			((GameState)GameStateEnum.Game.getStateInstance()).marioCollided = true;
+
+			return true;
 		}
+
+		return false;
 	}
-	public void checkAndFixRightCollision (Entity o) {
+	public boolean checkAndFixRightCollision (Entity o) {
 		if (loc.x+size.w > o.loc.x && loc.x+size.w < o.loc.x+o.size.w &&
 				((loc.y+size.h > o.loc.y && loc.y < o.loc.y) || (loc.y+size.h > o.loc.y+o.size.h && loc.y < o.loc.y+o.size.h) ||
 				(o.loc.y+o.size.h > loc.y+size.h && o.loc.y < loc.y+size.h) || (o.loc.y+o.size.h > loc.y && o.loc.y < loc.y))) {
 			loc.x = o.loc.x - size.w; // Right
-			((GameState)GameStateEnum.Game.getStateInstance()).marioCollided = true;
+
+			return true;
 		}
+
+		return false;
 	}
 
 	public Entity () {

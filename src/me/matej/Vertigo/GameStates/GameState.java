@@ -25,13 +25,13 @@ import org.newdawn.slick.Font;
  *
  * @author matejkramny
  */
+
 public class GameState extends GameStateClass {
 
 	private Mario mario;
 	private ArrayList<Obstacle> obstacles;
 
 	public double xOffset;
-	public boolean marioCollided = false;
 
 	@Override
 	public void draw() {
@@ -44,101 +44,32 @@ public class GameState extends GameStateClass {
 			f.drawString(10, 100, "Bullets: "+getBullets().size(), Color.black);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 
-		if (marioCollided) {
-			// Draw a red rectangle
-			GL11.glLoadIdentity();
-			GL11.glTranslated(10, 130, 0);
-			GL11.glColor3f(1, 0, 0);
-			GL11.glBegin(GL11.GL_QUADS);
-			{
-				GL11.glVertex2f(0, 0);
-				GL11.glVertex2f(20, 0);
-				GL11.glVertex2f(20, 20);
-				GL11.glVertex2f(0, 20);
-			}
-			GL11.glEnd();
-		}
-
-		getMario().draw();
-		if (getObstacles() != null) {
-			for(Obstacle e : getObstacles()) {
+		mario.draw();
+		if (obstacles != null) {
+			for(Obstacle e : obstacles) {
 				if (e != null)
 					e.draw();
 			}
 		}
-		if (getBullets() != null) {
-			for(Bullet b : getBullets()) {
+		if (bullets != null) {
+			for(Bullet b : bullets) {
 				if (b != null)
 					b.draw();
 			}
 		}
 	}
 
-	// Gravity pulls mario down (+y) by gravity * delta
-	private final double gravity = 0.25f;
-	//private double jumpVelocity; // Speed at which mario falls (or rises)
-	//private final double terminalJumpVelocity = 0.4; // Max velocity mario can ever achieve
-	//private final double jumpCooldownPeriod = 1.0;
-	//private double jumpYOffset;
-	private boolean gravityEnabled = true;
-
 	@Override
 	public void update(int delta) {
-		Vector oldLoc = new Vector(getMario().loc.x, getMario().loc.y);
-
-		boolean marioAttractedByGravity = true;
-		marioCollided = false;
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			mario.loc.y -= 0.2d * delta;
-			marioAttractedByGravity = false;
-
-			for (Obstacle o : getObstacles()) {
-				o.checkAndFixTopCollision(getMario());
-			}
-		}
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-		}
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_A) && !Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			mario.loc.x -= 0.2d * delta;
-			if (getMario().loc.x < 50) {
-				mario.loc.x = 50;
-				xOffset += 0.2d * delta;
-			}
-
-			for (Obstacle o : getObstacles()) {
-				o.checkAndFixLeftCollision(getMario());
-			}
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_D) && !Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			mario.loc.x += 0.2d * delta;
-			double dw = OpenGL.getDisplayMode().getWidth();
-			if (getMario().loc.x+getMario().size.w+50 > dw) {
-				mario.loc.x = dw - 50 - getMario().size.w;
-				xOffset -= 0.2d * delta;
-			}
-
-			for (Obstacle o : getObstacles()) {
-				o.checkAndFixRightCollision(getMario());
-			}
-		}
-
-		if (marioAttractedByGravity && gravityEnabled) {
-			mario.loc.y += gravity * delta;
-			for (Obstacle o : getObstacles()) {
-				o.checkAndFixBottomCollision(getMario());
-			}
-		}
+		mario.update(delta);
 
 		for (Obstacle o : getObstacles()) {
 			o.xOffset = xOffset;
 		}
-		
-		if (getBullets() != null) {
+
+		if (bullets != null) {
 			ArrayList<Bullet> removeList = new ArrayList<Bullet>();
-			for (Bullet b : getBullets()) {
+			for (Bullet b : bullets) {
 				b.update(delta);
 				DisplayMode dm = OpenGL.getDisplayMode();
 				int w = dm.getWidth(), h = dm.getHeight();
@@ -150,7 +81,7 @@ public class GameState extends GameStateClass {
 			getBullets().removeAll(removeList);
 		}
 	}
-	
+
 	@Override
 	public void keyPressed(int key) {
 		if (key == Keyboard.KEY_F3) {
@@ -161,17 +92,15 @@ public class GameState extends GameStateClass {
 		    } finally {
 				System.out.println("Saved obstacles..");
 		    }
-		}
-		if (key == Keyboard.KEY_R) {
+		} else if (key == Keyboard.KEY_R) {
 			this.init();
 			this.xOffset = 0;
-		}
-		if (key == Keyboard.KEY_G)
-			this.gravityEnabled = !this.gravityEnabled;
-		if (key == Keyboard.KEY_Q) {
+		} else if (key == Keyboard.KEY_Q) {
 			SoundManager sm = SoundManager.getSingleton();
 			sm.getExplosion().playAsSoundEffect(1.0f, 1.0f, false);
 		}
+
+		mario.keyPressed(key);
 	}
 
 	private ArrayList<Bullet> bullets;
@@ -182,9 +111,9 @@ public class GameState extends GameStateClass {
 		if (getBullets() == null) {
 			bullets = new ArrayList<Bullet>();
 		}
-		
+
 		DisplayMode dm = OpenGL.getDisplayMode();
-		
+
 		if (index == 0) {
 			Bullet b = new Bullet();
 
@@ -202,9 +131,9 @@ public class GameState extends GameStateClass {
 		} else {
 			int mx = Mouse.getX()-10, my = dm.getHeight() - Mouse.getY()-10;
 			int x = dm.getWidth()/2-10, y = dm.getHeight()/2-10;
-			
+
 			double xDiff = mx - x, yDiff = my - y;
-			
+
 			float actual = (float)Math.abs(Math.toDegrees(Math.atan(yDiff / xDiff)));
 
 			if (xDiff > 0f && yDiff < 0f)
@@ -215,9 +144,9 @@ public class GameState extends GameStateClass {
 				actual = 90f + (90f - actual);
 
 			double dx = Math.cos(Math.toRadians(actual)), dy = Math.sin(Math.toRadians(actual));
-			
+
 			Bullet b = new Bullet();
-			
+
 			b.loc = new Vector(x, y);
 			b.r = 0f;
 			b.g = 1f;
@@ -225,7 +154,7 @@ public class GameState extends GameStateClass {
 			b.a = 1;
 			b.size = new SizeVector(20, 20);
 			b.dir = new Vector(dx, dy);
-			
+
 			getBullets().add(b);
 		}
 	}
@@ -246,9 +175,9 @@ public class GameState extends GameStateClass {
 
 		obstacles = new ArrayList<Obstacle>();
 
-		Obstacle[] ents = { new Obstacle(new Vector (0.0, OpenGL.getDisplayMode().getHeight()-100), new SizeVector(300.0, 100.0), 1, 0, 0),
-						new Obstacle(new Vector(300.0, OpenGL.getDisplayMode().getHeight()-60-143), new SizeVector(90.0, 10.0), 1, 1, 0),
-						new Obstacle(new Vector(300.0, OpenGL.getDisplayMode().getHeight()-50), new SizeVector(1000.0, 10.0), 1, 0, 0),
+		Obstacle[] ents = { new Obstacle(new Vector (0.0, OpenGL.getDisplayMode().getHeight()-200), new SizeVector(300.0, 20.0), 1, 0, 0),
+						new Obstacle(new Vector(300.0, OpenGL.getDisplayMode().getHeight()-100), new SizeVector(90.0, 20.0), 1, 1, 0),
+						new Obstacle(new Vector(300.0, OpenGL.getDisplayMode().getHeight()-50), new SizeVector(350.0, 20.0), 1, 0, 0),
 						new Obstacle(new Vector(0.0, 0.0), new SizeVector(OpenGL.getDisplayMode().getWidth(), 1), 1, 0, 0, true),
 						new Obstacle(new Vector(0.0, OpenGL.getDisplayMode().getHeight()-1), new SizeVector(OpenGL.getDisplayMode().getWidth(), 1), 1, 0, 0, true)
 		};

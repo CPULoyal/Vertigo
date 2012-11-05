@@ -10,7 +10,7 @@ public class Obstacle extends Entity {
 	public double xOffset;
 	public boolean sticky;
 	//collidesWithOthers...
-	
+
 	public Obstacle (Vector v, SizeVector s, float r, float g, float b, boolean sticky) {
 		this(v, s, r, g, b);
 		this.sticky = sticky;
@@ -32,6 +32,15 @@ public class Obstacle extends Entity {
 	}
 
 	@Override
+	public boolean touchesEntity (Entity o) {
+		loc.x += xOffset;
+		boolean touch = super.touchesEntity(o);
+		loc.x -= xOffset;
+
+		return touch;
+	}
+
+	@Override
 	public boolean basicCollide (Entity other) {
 		if (sticky) {
 			return super.basicCollide(other);
@@ -43,48 +52,56 @@ public class Obstacle extends Entity {
 			return collide;
 		}
 	}
-	
+
 	@Override
-	public void checkAndFixLeftCollision (Entity o) {
+	public boolean checkAndFixLeftCollision (Entity o) {
 		if (sticky) {
-			o.checkAndFixLeftCollision(this);
+			return o.checkAndFixLeftCollision(this);
 		} else {
 			loc.x += xOffset;
-			o.checkAndFixLeftCollision(this);
+			boolean collide = o.checkAndFixLeftCollision(this);
 			loc.x -= xOffset;
+
+			return collide;
 		}
 	}
-	
+
 	@Override
-	public void checkAndFixRightCollision (Entity o) {
+	public boolean checkAndFixRightCollision (Entity o) {
 		if (sticky) {
-			o.checkAndFixRightCollision(this);
+			return o.checkAndFixRightCollision(this);
 		} else {
 			loc.x += xOffset;
-			o.checkAndFixRightCollision(this);
+			boolean collide = o.checkAndFixRightCollision(this);
 			loc.x -= xOffset;
+
+			return collide;
 		}
 	}
-	
+
 	@Override
-	public void checkAndFixTopCollision (Entity o) {
+	public boolean checkAndFixTopCollision (Entity o) {
 		if (sticky) {
-			o.checkAndFixTopCollision(this);
+			return o.checkAndFixTopCollision(this);
 		} else {
 			loc.x += xOffset;
-			o.checkAndFixTopCollision(this);
+			boolean collide = o.checkAndFixTopCollision(this);
 			loc.x -= xOffset;
+
+			return collide;
 		}
 	}
-	
+
 	@Override
-	public void checkAndFixBottomCollision (Entity o) {
+	public boolean checkAndFixBottomCollision (Entity o) {
 		if (sticky) {
-			o.checkAndFixBottomCollision(this);
+			return o.checkAndFixBottomCollision(this);
 		} else {
 			loc.x += xOffset;
-			o.checkAndFixBottomCollision(this);
+			boolean collide = o.checkAndFixBottomCollision(this);
 			loc.x -= xOffset;
+
+			return collide;
 		}
 	}
 }

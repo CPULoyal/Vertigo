@@ -117,10 +117,11 @@ public class GameState extends GameStateClass {
 			Bullet b = new Bullet();
 
 			b.loc = new Vector(dm.getWidth()/2-5, dm.getHeight()/2-5);
-			b.r = (float)Math.random();
-			b.g = (float)Math.random();
-			b.b = (float)Math.random();
-			b.a = 1;
+			Color c = b.color;
+			c.r = (float)Math.random();
+			c.g = (float)Math.random();
+			c.b = (float)Math.random();
+			c.a = 1;
 			b.size = new SizeVector(10, 10);
 			double x = Math.random();
 			double y = Math.random();
@@ -147,10 +148,10 @@ public class GameState extends GameStateClass {
 			Bullet b = new Bullet();
 
 			b.loc = new Vector(x, y);
-			b.r = 0f;
-			b.g = 1f;
-			b.b = 0f;
-			b.a = 1;
+			b.color.r = 0f;
+			b.color.g = 1f;
+			b.color.b = 0f;
+			b.color.a = 1;
 			b.size = new SizeVector(20, 20);
 			b.dir = new Vector(dx, dy);
 
@@ -174,11 +175,11 @@ public class GameState extends GameStateClass {
 
 		obstacles = new ArrayList<Obstacle>();
 
-		Obstacle[] ents = { new Obstacle(new Vector (0.0, OpenGL.getDisplayMode().getHeight()-200), new SizeVector(300.0, 20.0), 1, 0, 0),
-						new Obstacle(new Vector(300.0, OpenGL.getDisplayMode().getHeight()-100), new SizeVector(90.0, 20.0), 1, 1, 0),
-						new Obstacle(new Vector(300.0, OpenGL.getDisplayMode().getHeight()-50), new SizeVector(350.0, 20.0), 1, 0, 0),
-						new Obstacle(new Vector(0.0, 0.0), new SizeVector(OpenGL.getDisplayMode().getWidth(), 1), 1, 0, 0, true),
-						new Obstacle(new Vector(0.0, OpenGL.getDisplayMode().getHeight()-1), new SizeVector(OpenGL.getDisplayMode().getWidth(), 1), 1, 0, 0, true)
+		Obstacle[] ents = { new Obstacle(new Vector (0.0, OpenGL.getDisplayMode().getHeight()-200), new SizeVector(300.0, 20.0), Color.red),
+						new Obstacle(new Vector(300.0, OpenGL.getDisplayMode().getHeight()-100), new SizeVector(50.0, 20.0), Color.yellow),
+						new Obstacle(new Vector(300.0, OpenGL.getDisplayMode().getHeight()-50), new SizeVector(350.0, 20.0), Color.red),
+						new Obstacle(new Vector(0.0, 0.0), new SizeVector(OpenGL.getDisplayMode().getWidth(), 1), Color.red, true),
+						new Obstacle(new Vector(0.0, OpenGL.getDisplayMode().getHeight()-1), new SizeVector(OpenGL.getDisplayMode().getWidth(), 1), Color.red, true)
 		};
 		getObstacles().addAll(Arrays.asList(ents));
 	}

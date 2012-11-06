@@ -2,9 +2,12 @@ package me.matej.Vertigo.Entities;
 
 import me.matej.Vertigo.GameStateEnum;
 import me.matej.Vertigo.GameStates.GameState;
+import me.matej.Vertigo.Main;
 import me.matej.Vertigo.OpenGL;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.TrueTypeFont;
 
 /**
  *
@@ -18,7 +21,7 @@ public class Mario extends TexturedEntity {
 	private GameState game;
 	// Gravity pulls mario down (+y) by gravity * delta
 	private final double gravity = 0.0015d;
-	private final double terminalVelocity = 0.5d;
+	private final double terminalVelocity = 0.8d;
 	private double jumpAngle = 90.0; // Angle used for smoothing
 	private double jumpVelocity = 0.0; // Speed at which mario falls (or rises)
 	private final double startJumpVelocity = 0.8; // Max velocity mario can ever achieve
@@ -51,6 +54,13 @@ public class Mario extends TexturedEntity {
 		GL11.glVertex2d(health, 20);
 		GL11.glVertex2d(0, 20);
 		GL11.glEnd();
+
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		TrueTypeFont font = Main.getOpenGL().getFont();
+		String velocityText = "Health: "+(int)health;
+		GL11.glTranslated(-font.getWidth(velocityText), -10, 0);
+		font.drawString(-10, font.getHeight(velocityText)/2-7, velocityText, Color.black);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
 	}
 
 	private boolean isMidAir () {
@@ -139,13 +149,16 @@ public class Mario extends TexturedEntity {
 				falling = true;
 				for (Obstacle o : game.getObstacles()) {
 					if (o.checkAndFixBottomCollision(this)) {
-						falling = false;
-						jumpVelocity = 0;
-						jumpAngle = 90;
 						if (wasJumping) {
 							wasJumping = false;
 							lastJumpEnd = System.currentTimeMillis();
+							if (jumpVelocity <= -terminalVelocity) {
+								affectHealth(-10);
+							}
 						}
+						falling = false;
+						jumpVelocity = 0;
+						jumpAngle = 90;
 					}
 				}
 			}
@@ -165,7 +178,7 @@ public class Mario extends TexturedEntity {
 	public void affectHealth (double diff) {
 		health += diff;
 
-		if (health < 0) {
+		if (health <= 0) {
 			game.keyPressed(Keyboard.KEY_R); // Reset
 		}
 	}

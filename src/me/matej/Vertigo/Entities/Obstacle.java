@@ -1,6 +1,7 @@
 package me.matej.Vertigo.Entities;
 
 import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.Color;
 
 /**
  *
@@ -11,12 +12,12 @@ public class Obstacle extends Entity {
 	public boolean sticky;
 	//collidesWithOthers...
 
-	public Obstacle (Vector v, SizeVector s, float r, float g, float b, boolean sticky) {
-		this(v, s, r, g, b);
+	public Obstacle (Vector v, SizeVector s, Color c, boolean sticky) {
+		this(v, s, c);
 		this.sticky = sticky;
 	}
-	public Obstacle (Vector v, SizeVector s, float r, float g, float b) {
-		super(v, s, r, g, b);
+	public Obstacle (Vector v, SizeVector s, Color c) {
+		super(v, s, c);
 		sticky = false;
 	}
 

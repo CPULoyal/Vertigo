@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import me.matej.Vertigo.GameStateEnum;
 import me.matej.Vertigo.GameStates.GameState;
 import me.matej.Vertigo.SoundManager;
+import org.newdawn.slick.Color;
 
 /**
  *
@@ -12,6 +13,10 @@ import me.matej.Vertigo.SoundManager;
 public class Bullet extends Entity {
 	public Vector dir; // Direction
 	private boolean didCollide = false;
+
+	public Bullet () {
+		color = new Color(0, 0, 0, 0);
+	}
 
 	public void update (int delta) {
 		loc.x += dir.x * delta / 10;
@@ -31,10 +36,10 @@ public class Bullet extends Entity {
 			}
 		else {
 			// Visible Explooooosion and Audible BOOM (at the same time)
-			r = (float)Math.random();
-			g = (float)Math.random();
-			b = (float)Math.random();
-			a -= 0.003 * delta;
+			color.r = (float)Math.random();
+			color.g = (float)Math.random();
+			color.b = (float)Math.random();
+			color.a -= 0.003 * delta;
 
 			double explSize = 0.08 * delta;
 			size.w += explSize;
@@ -45,7 +50,7 @@ public class Bullet extends Entity {
 			dir.x = 0;
 			dir.y = 0;
 
-			if (a <= 0.0) {
+			if (color.a <= 0.0) {
 				// Remove from screen
 				loc.x = -size.w*2;
 				loc.y = -size.h*2;

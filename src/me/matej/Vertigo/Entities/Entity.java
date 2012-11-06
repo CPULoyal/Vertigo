@@ -1,10 +1,8 @@
 package me.matej.Vertigo.Entities;
 
-import java.awt.Rectangle;
-import me.matej.Vertigo.GameStateEnum;
-import me.matej.Vertigo.GameStates.GameState;
 import me.matej.Vertigo.OpenGL;
 import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.Color;
 
 /**
  *
@@ -14,11 +12,9 @@ public class Entity {
 	public Vector loc; // location
 	public SizeVector size; // width and height
 	public double rot; // Rotation angle
-	public float r, g, b, a; // Colour
+	public Color color; // Colour
 
 	public boolean centeredRot = true;
-	private Rectangle me;
-	private Rectangle him;
 
 	public void draw () {
 		this.drawBegin();
@@ -49,7 +45,7 @@ public class Entity {
 		}
 	}
 	protected void color () {
-		GL11.glColor4f(r, g, b, a);
+		GL11.glColor4f(color.r, color.g, color.b, color.a);
 	}
 	protected void drawVerts () {
 		GL11.glBegin(GL11.GL_QUADS);
@@ -141,23 +137,13 @@ public class Entity {
 		this(new Vector(0, 0), new SizeVector(0,0));
 	}
 	public Entity (Vector v, SizeVector s) {
-		this(v, s, 0, 0, 0);
+		this(v, s, Color.black);
 	}
-	public Entity (Vector v, SizeVector s, float r, float g, float b) {
-		this(v, s, r, g, b, 1);
-	}
-	public Entity (Vector v, SizeVector s, float r, float g, float b, float a) {
+	public Entity (Vector v, SizeVector s, Color c) {
 		loc = v;
 		size = s;
-		this.r = r;
-		this.g = g;
-		this.b = b;
-		this.a = a;
-
-		me = new Rectangle();
-		him = new Rectangle();
-
-		resetRot();
+		color = c;
+		rot = 0;
 	}
 
 	public void resetY () {

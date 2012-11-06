@@ -26,18 +26,18 @@ public class Main {
 
 	private void run () {
 		openGL = new OpenGL();
-		
+
 		try {
 			SoundManager.getSingleton().loadExplosion();
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
 		}
-		
-		//GameState.Splash.getStateInstance().init();
-		//GameState.Splash.getStateInstance().active = true;
 
-		GameStateEnum.Game.getStateInstance().init();
-		GameStateEnum.Game.getStateInstance().active = true;
+		GameStateEnum.MainMenu.getStateInstance().init();
+		GameStateEnum.MainMenu.getStateInstance().active = true;
+
+		//GameStateEnum.Game.getStateInstance().init();
+		//GameStateEnum.Game.getStateInstance().active = true;
 
 		openGL.startLoop();
 	}

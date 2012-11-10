@@ -20,7 +20,7 @@ final public class OpenGL {
 	private int fps; // Current Frames per Second
 	private int FPS; // Frames in the last Second
 	private long lastFPS; // Last UNIX Time FPS was refreshed
-	private boolean vsync = true; // VSync enabled/disabled
+	private boolean vsync = false; // VSync enabled/disabled
 	private boolean fullscreen = false; // Fullscreen switch
 	private boolean running = true; // App shuts down if false
 	private static DisplayMode displayMode; // Current display mode
@@ -78,13 +78,20 @@ final public class OpenGL {
 			this.drawGL();
 
 			this.updateFPS();
+
+			Display.sync(100);
 			Display.update();
-			if (!vsync)
-				Display.sync(60);
+
+			System.out.println("FPS+"+this.getFps()+" isVsync "+vsync);
 		}
 
 		Display.destroy();
 		AL.destroy();
+	}
+
+	public void setVSync (boolean newValue) {
+		vsync = newValue;
+		Display.setVSyncEnabled(false);
 	}
 
 	private void initGL () {
@@ -104,26 +111,19 @@ final public class OpenGL {
 
 		Keyboard.enableRepeatEvents(true);
 
-		Display.setVSyncEnabled(vsync);
+		Display.setVSyncEnabled(false);
 
 		GL11.glClearColor(1f, 1f, 1f, 1.0f);
 		GL11.glClearDepth(1);
 	}
 
 	private void update (int delta) {
+		main.preUpdate();
+
 		while (Keyboard.next() && Keyboard.getEventKeyState()) {
 			int k = Keyboard.getEventKey();
 
-			if (k == Keyboard.KEY_ESCAPE)
-				running = false;
-			
-			else if (k == Keyboard.KEY_V) {
-				vsync = !vsync;
-
-				Display.setVSyncEnabled(vsync);
-			}
-			
-			else if (k == Keyboard.KEY_F) { //  main.getState().Splash.done && false
+			if (k == Keyboard.KEY_F) {
 				fullscreen = !fullscreen;
 
 				try {
@@ -131,11 +131,11 @@ final public class OpenGL {
 					if (fullscreen) {
 						this.setDisplayMode(Display.getDesktopDisplayMode(), fullscreen);
 						vsync = true;
-						Display.setVSyncEnabled(vsync);
+						Display.setVSyncEnabled(false);
 					} else {
-						this.setDisplayMode(new DisplayMode(800, 600), fullscreen);
+						this.setDisplayMode(new DisplayMode(800, 500), fullscreen);
 						vsync = false;
-						Display.setVSyncEnabled(vsync);
+						Display.setVSyncEnabled(false);
 					}
 				} catch (LWJGLException e) {
 					e.printStackTrace(System.err);

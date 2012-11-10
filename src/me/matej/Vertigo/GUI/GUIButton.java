@@ -17,11 +17,11 @@ import org.newdawn.slick.TrueTypeFont;
  * @author matejkramny
  */
 public class GUIButton extends Entity {
-	private GUIBorder border;
+	private GUIBorder border = new GUIBorder();
 	private TrueTypeFont font;
-	private Color fontColor;
-	private String text;
-	private Color hoverColor;
+	private Color fontColor = Color.black;
+	private String text = "";
+	private Color hoverColor = Color.white;
 	private Entity mouse = new Entity(new Vector(0, 0), new SizeVector(3, 3));
 	private boolean isHoverState = false;
 	public GUIEventInterface delegate;
@@ -59,7 +59,6 @@ public class GUIButton extends Entity {
 				SoundManager.getSingleton().getClick().playAsSoundEffect(1f, 1f, false);
 			}
 		}
-
 	}
 
 	public void update (int delta) {
@@ -74,6 +73,17 @@ public class GUIButton extends Entity {
 
 	public GUIButton () {
 		super();
+	}
+	public GUIButton (String text, Color fontColor, TrueTypeFont font, Vector loc, SizeVector size, Color color, Color hoverColor, GUIEventInterface delegate) {
+		this();
+		this.text = text;
+		this.fontColor = fontColor;
+		this.font = font;
+		this.loc = loc;
+		this.size = size;
+		this.color = color;
+		this.hoverColor = hoverColor;
+		this.delegate = delegate;
 	}
 
 	public void setColor (Color newColor) {

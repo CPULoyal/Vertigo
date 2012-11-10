@@ -1,19 +1,17 @@
 package me.matej.Vertigo.GameStates;
 
-import java.awt.Font;
+import java.util.HashMap;
 import me.matej.Vertigo.Entities.Entity;
 import me.matej.Vertigo.Entities.SizeVector;
 import me.matej.Vertigo.Entities.Vector;
-import me.matej.Vertigo.GUI.GUIBorder;
 import me.matej.Vertigo.GUI.GUIButton;
 import me.matej.Vertigo.GUI.GUIEventInterface;
 import me.matej.Vertigo.GameStateEnum;
 import me.matej.Vertigo.OpenGL;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
+import me.matej.Vertigo.Main;
 
 /**
  *
@@ -21,29 +19,23 @@ import org.newdawn.slick.TrueTypeFont;
  */
 public class MainMenuState extends GameStateClass implements GUIEventInterface {
 
-	// TODO GUI
-	private GUIButton startButton;
+	private HashMap<String, GUIButton> buttons;
 	private TrueTypeFont font;
 
-	private static final String startText = "Start Game";
-
-	private boolean continueToGame = false; // Flags whether mainMenu sets game to active mode
+	private Entity background;
 
 	@Override
 	public void draw() {
-		startButton.draw();
+		background.draw();
+		for (GUIButton button : buttons.values())
+			button.draw();
 	}
 
 	private Entity mouse = new Entity(new Vector(), new SizeVector(5,5), Color.transparent);
 	@Override
 	public void update(int delta) {
-		if (continueToGame) {
-			this.active = false;
-			GameStateEnum.Game.getStateInstance().init(); GameStateEnum.Game.getStateInstance().active = true; // Switch to next scene..
-			return;
-		}
-
-		startButton.update(delta);
+		for (GUIButton button : buttons.values())
+			button.update(delta);
 	}
 
 	@Override
@@ -53,39 +45,46 @@ public class MainMenuState extends GameStateClass implements GUIEventInterface {
 
 	@Override
 	public void mouseButtonPressed(int index) {
-		startButton.mouseButtonPressed(index);
+		for (GUIButton button : buttons.values())
+			button.mouseButtonPressed(index);
 	}
 
 	// Implements from GUIEventInterface
 	@Override
 	public void mouseClicked (Entity o, int index) {
-		if (o.equals(startButton)) {
-			this.continueToGame = true;
+		if (o.equals(buttons.get("startGame"))) {
+			Main.getInstance().changeState(GameStateEnum.Game, GameStateEnum.MainMenu);
+		} else if (o.equals(buttons.get("options"))) {
+			// Activate Options screen
+			active = false;
+			GameStateEnum.Options.getStateInstance().active = true;
+			GameStateEnum.Options.getStateInstance().init();
+		} else if (o.equals(buttons.get("quit"))) {
+			System.exit(0);
 		}
 	}
 
 	@Override
 	public void init() {
-		Font awtFont = new Font("Arial", Font.BOLD, 20);
-		font = new TrueTypeFont (awtFont, true);
+		this.didInit = true;
+
+		font = Main.buttonFont;
 
 		DisplayMode dm = OpenGL.getDisplayMode();
-		startButton = new GUIButton();
-		startButton.setText(startText);
-		startButton.setFont(font);
-		startButton.setFontColor(Color.black);
-		startButton.size = new SizeVector(200, 40);
-		startButton.loc = new Vector(dm.getWidth()/2-startButton.size.w/2, dm.getHeight()/2-startButton.size.h/2 - startButton.size.h - 100);
-		startButton.setColor(Color.green);
-		startButton.setHoverColor(new Color(0.5f, 1f, 0f));
-		startButton.rot = 0;
-		startButton.delegate = this;
+		buttons = new HashMap<String, GUIButton>();
 
-		GUIBorder border = new GUIBorder();
-		border.size = new SizeVector(startButton.size.w+10, startButton.size.h+10);
-		border.loc = new Vector(startButton.loc.x-5, startButton.loc.y-5);
-		border.color = new Color(0.2f, 0.8f, 0f);
-		startButton.setBorder(border);
+		background = new Entity(new Vector(0,0), new SizeVector(dm.getWidth(), dm.getHeight()), new Color(0f, 0f, 1f));
+
+		GUIButton b = new GUIButton("Start Game", Color.black, font, new Vector(dm, SizeVector.buttonSize, 0.0, -100), SizeVector.buttonSize, Color.green, new Color(0.5f, 1f, 0f), this);
+		buttons.put("startGame", b);
+		b = new GUIButton("Options", Color.black, font, new Vector(dm, SizeVector.buttonSize, 0.0, -40), SizeVector.buttonSize, Color.green, new Color(0.5f, 1f, 0f), this);
+		buttons.put("options", b);
+		b = new GUIButton("Exit", Color.black, font, new Vector(dm, SizeVector.buttonSize, 0.0, 20), SizeVector.buttonSize, Color.green, new Color(0.5f, 1f, 0f), this);
+		buttons.put("quit", b);
+
+		buttons.get("startGame").getBorder().configure(new Vector(dm, SizeVector.buttonBorderSize, 0, -100), SizeVector.buttonBorderSize, new Color(0.2f, 0.8f, 0f));
+		buttons.get("options").getBorder().configure(new Vector(dm, SizeVector.buttonBorderSize, 0, -40), SizeVector.buttonBorderSize, new Color(0.2f, 0.8f, 0f));
+		buttons.get("quit").getBorder().configure(new Vector(dm, SizeVector.buttonBorderSize, 0, 20), SizeVector.buttonBorderSize, new Color(0.2f, 0.8f, 0f));
 	}
 
 	@Override

@@ -14,7 +14,7 @@ import org.newdawn.slick.TrueTypeFont;
  * @author matejkramny
  */
 // Alias Mario
-public class Mario extends TexturedEntity {
+public class Mario extends Entity {
 
 	public static String relMarioLoc = "me/matej/Vertigo/resources/Mario.png";
 
@@ -31,7 +31,8 @@ public class Mario extends TexturedEntity {
 	private double health; // Mario's health - starts at 100
 
 	public Mario (Vector v, SizeVector size) {
-		super(v, size, relMarioLoc);
+		super(v, size); //, relMarioLoc
+		color = new Color(0.3f, 0.3f, .3f); // not textured so needs a colour
 		game = (GameState)GameStateEnum.Game.getStateInstance();
 		health = 100;
 	}

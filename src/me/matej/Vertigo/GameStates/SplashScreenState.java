@@ -22,6 +22,8 @@ public class SplashScreenState extends GameStateClass {
 
 	@Override
 	public void init () {
+		this.didInit = true;
+
 		try {
 			splash = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(splashPath));
 		} catch (Exception e) {

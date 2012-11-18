@@ -25,8 +25,9 @@ final public class OpenGL {
 	private boolean running = true; // App shuts down if false
 	private static DisplayMode displayMode; // Current display mode
 	private TrueTypeFont font; // Font used to display text
-	private Main main = Main.getInstance();
+	private OpenGLDelegate delegate;
 	private SoundManager soundManager = SoundManager.getSingleton();
+	private boolean ignoresDefaultKeypress = false;
 
 	private boolean setupComplete = false;
 
@@ -49,8 +50,16 @@ final public class OpenGL {
 	public TrueTypeFont getFont () {
 		return font;
 	}
+	public boolean isIgnoringDefaultKeypresses () {
+		return ignoresDefaultKeypress;
+	}
+	public void setIgnoresDefaultKeypress(boolean newValue) {
+		this.ignoresDefaultKeypress = newValue;
+	}
 
-	public OpenGL () {
+	public OpenGL (OpenGLDelegate delegate) {
+		this.delegate = delegate;
+
 		try {
 			this.setDisplayMode(new DisplayMode(800, 500), fullscreen);
 			Display.create();
@@ -82,11 +91,12 @@ final public class OpenGL {
 			Display.sync(100);
 			Display.update();
 
-			System.out.println("FPS+"+this.getFps()+" isVsync "+vsync);
+			//System.out.println("FPS+"+this.getFps()+" isVsync "+vsync);
 		}
 
 		Display.destroy();
 		AL.destroy();
+		System.exit(0);
 	}
 
 	public void setVSync (boolean newValue) {
@@ -118,12 +128,12 @@ final public class OpenGL {
 	}
 
 	private void update (int delta) {
-		main.preUpdate();
+		delegate.preUpdate();
 
 		while (Keyboard.next() && Keyboard.getEventKeyState()) {
 			int k = Keyboard.getEventKey();
 
-			if (k == Keyboard.KEY_F) {
+			if (!ignoresDefaultKeypress && k == Keyboard.KEY_F) {
 				fullscreen = !fullscreen;
 
 				try {
@@ -142,12 +152,7 @@ final public class OpenGL {
 				}
 			}
 			else {
-				for (int i = 0; i < GameStateEnum.values().length; i++) {
-					GameStateEnum state = GameStateEnum.values()[i];
-					if (state.getStateInstance().active) {
-						state.getStateInstance().keyPressed(k);
-					}
-				}
+				delegate.keyPressed(k);
 			}
 		}
 
@@ -162,7 +167,7 @@ final public class OpenGL {
 			}
 		}
 
-		main.update (delta);
+		delegate.update (delta);
 		soundManager.update(delta);
 	}
 
@@ -170,7 +175,7 @@ final public class OpenGL {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 
-		main.draw();
+		delegate.draw();
 	}
 
 	private void setDisplayMode (DisplayMode target, boolean fs) throws LWJGLException {
@@ -187,7 +192,7 @@ final public class OpenGL {
 
 		if (setupComplete) {
 			this.initGL();
-			main.displayModeChanged(displayMode);
+			delegate.displayModeChanged(displayMode);
 		}
 	}
 

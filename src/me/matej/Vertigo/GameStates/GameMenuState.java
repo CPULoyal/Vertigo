@@ -1,6 +1,6 @@
 package me.matej.Vertigo.GameStates;
 
-import java.awt.Font;
+import me.matej.Vertigo.GUI.GUIText;
 import java.util.HashMap;
 import me.matej.Vertigo.Entities.Entity;
 import me.matej.Vertigo.Entities.SizeVector;

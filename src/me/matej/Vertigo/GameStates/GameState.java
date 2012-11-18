@@ -7,9 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import java.io.*;
 import java.lang.reflect.Type;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import me.matej.Vertigo.Entities.*;
 import me.matej.Vertigo.GameStateEnum;
 import me.matej.Vertigo.Main;
@@ -70,7 +68,7 @@ public class GameState extends GameStateClass {
 		if (!paused) {
 			mario.update(delta);
 
-			for (Obstacle o : getObstacles()) {
+			for (Obstacle o : obstacles) {
 				o.xOffset = xOffset;
 			}
 
@@ -181,8 +179,7 @@ public class GameState extends GameStateClass {
 
 	@Override
 	public void init() {
-		// Uncomment line below to avoid side-effect when switching DM
-		// TODO call changedDisplayMode on all Enum.values() methods
+		// Uncomment line below to avoid side-effect when switching DM (world resets when dm changes)
 		//this.didInit = true; // We want to get init() again when we start the game for second time..
 
 		// Load mario
@@ -197,7 +194,7 @@ public class GameState extends GameStateClass {
 			System.out.println("Obstacles loaded successfully.");
 		}
 
-		obstacles = new ArrayList<Obstacle>();
+		//obstacles = new ArrayList<Obstacle>();
 
 		DisplayMode dm = OpenGL.getDisplayMode();
 
@@ -207,7 +204,7 @@ public class GameState extends GameStateClass {
 						new Obstacle(new Vector(0.0, -1.0), new SizeVector(OpenGL.getDisplayMode().getWidth(), 1), Color.transparent, true),
 						new Obstacle(new Vector(0.0, OpenGL.getDisplayMode().getHeight()), new SizeVector(OpenGL.getDisplayMode().getWidth(), 1), Color.transparent, true)
 		};
-		getObstacles().addAll(Arrays.asList(ents));
+		//obstacles.addAll(Arrays.asList(ents));
 	}
 
 	@Override
@@ -219,25 +216,28 @@ public class GameState extends GameStateClass {
 		paused = newPaused;
 	}
 
-	private static String relObstaclesLoc = "/me/matej/Vertigo/resources/Obstacles.json";
+	private static String worldLoc = Main.getSaveDir() + "World.json";
 
 	private void loadObstacles () throws JsonIOException, JsonSyntaxException, IOException {
-		Type obstaclesType = new TypeToken<ArrayList<Entity>>(){}.getType();
+		Type obstaclesType = new TypeToken<ArrayList<Obstacle>>(){}.getType();
 
-		URL url = getClass().getResource(relObstaclesLoc);
-		String path = url.getFile();
-		System.out.println("Obstacles loading from "+path);
-		FileReader fr = new FileReader(path);
+		System.out.println("Path to world is: "+worldLoc);
+
+		File worldFile = new File(worldLoc);
+		if (!worldFile.exists()) {
+			worldFile.createNewFile();
+			obstacles = new ArrayList<Obstacle>();
+			return;
+		}
+
+		FileReader fr = new FileReader(worldFile);
 		JsonReader reader = new JsonReader(fr);
 		obstacles = new Gson().fromJson(reader, obstaclesType);
 		fr.close();
 	}
 
 	private void saveObstacles () throws IOException {
-		URL url = getClass().getResource(relObstaclesLoc);
-		String path = url.getFile();
-
-		PrintWriter pw = new PrintWriter (new FileWriter(new File(path)));
+		PrintWriter pw = new PrintWriter (new FileWriter(new File(worldLoc)));
 		pw.print(new Gson().toJson(getObstacles()));
 		pw.close();
 	}
@@ -253,6 +253,8 @@ public class GameState extends GameStateClass {
 	 * @return the obstacles
 	 */
 	public ArrayList<Obstacle> getObstacles() {
+		if (obstacles == null)
+			obstacles = new ArrayList<Obstacle>();
 		return obstacles;
 	}
 

@@ -109,4 +109,9 @@ public class Obstacle extends Entity {
 			return collide;
 		}
 	}
+
+	@Override
+	public String toString () {
+		return String.format("X:%.3f Y:%.3f W:%.3f H:%.3f Red:%.3f Green:%.3f Blue:%.3f Alpha:%.3f %n", loc.x, loc.y, size.w, size.h, color.r, color.g, color.b, color.a);
+	}
 }

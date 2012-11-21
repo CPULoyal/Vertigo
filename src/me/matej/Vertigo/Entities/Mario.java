@@ -10,7 +10,6 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
 
 /**
- *
  * @author matejkramny
  */
 // Alias Mario
@@ -18,7 +17,7 @@ public class Mario extends Entity {
 
 	public static String relMarioLoc = "me/matej/Vertigo/resources/Mario.png";
 
-	private GameState game;
+	//private GameState game;
 	// Gravity pulls mario down (+y) by gravity * delta
 	private final double gravity = 0.0015d;
 	private final double terminalVelocity = 0.8d;
@@ -30,20 +29,19 @@ public class Mario extends Entity {
 	private boolean gravityEnabled = true;
 	private double health; // Mario's health - starts at 100
 
-	public Mario (Vector v, SizeVector size) {
+	public Mario(Vector v, SizeVector size) {
 		super(v, size); //, relMarioLoc
 		color = new Color(0.3f, 0.3f, .3f); // not textured so needs a colour
-		game = (GameState)GameStateEnum.Game.getStateInstance();
 		health = 100;
 	}
 
-	public void keyPressed (int key) {
+	public void keyPressed(int key) {
 		if (key == Keyboard.KEY_G)
 			this.gravityEnabled = !this.gravityEnabled;
 	}
 
 	@Override
-	public void draw () {
+	public void draw() {
 		super.draw();
 
 		GL11.glLoadIdentity();
@@ -57,15 +55,15 @@ public class Mario extends Entity {
 		GL11.glEnd();
 
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		TrueTypeFont font = Main.getOpenGL().getFont();
-		String velocityText = "Health: "+(int)health;
+		TrueTypeFont font = OpenGL.getFont();
+		String velocityText = "Health: " + (int) health;
 		GL11.glTranslated(-font.getWidth(velocityText), -10, 0);
-		font.drawString(-10, font.getHeight(velocityText)/2-7, velocityText, Color.black);
+		font.drawString(-10, font.getHeight(velocityText) / 2 - 7, velocityText, Color.black);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 	}
 
-	private boolean isMidAir () {
-		for (Obstacle o : game.getObstacles()) {
+	private boolean isMidAir() {
+		for (Obstacle o : ((GameState) GameStateEnum.Game.getStateInstance()).getObstacles()) {
 			if (o.touchesEntity(this))
 				return false;
 		}
@@ -77,11 +75,12 @@ public class Mario extends Entity {
 	private boolean falling = true;
 	private boolean wasJumping = false;
 
-	public void update (int delta) {
+	public void update(int delta) {
+		GameState game = ((GameState) GameStateEnum.Game.getStateInstance());
 		Vector oldLoc = new Vector(loc.x, loc.y);
 		boolean marioAttractedByGravity = true;
 
-		if (Keyboard.isKeyDown(Keyboard.KEY_W) && !falling && System.currentTimeMillis() > lastJumpEnd+jumpCooldownPeriod) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_W) && !falling && System.currentTimeMillis() > lastJumpEnd + jumpCooldownPeriod) {
 			boolean midAir = isMidAir();
 
 			if (!midAir && !wasJumping && !falling) { // First loop jump
@@ -123,7 +122,7 @@ public class Mario extends Entity {
 		if (Keyboard.isKeyDown(Keyboard.KEY_D) && !Keyboard.isKeyDown(Keyboard.KEY_A)) {
 			loc.x += 0.2d * delta;
 			double dw = OpenGL.getDisplayMode().getWidth();
-			if (loc.x+size.w+50 > dw) {
+			if (loc.x + size.w + 50 > dw) {
 				loc.x = dw - 50 - size.w;
 				game.xOffset -= 0.2d * delta;
 			}
@@ -162,8 +161,7 @@ public class Mario extends Entity {
 						jumpAngle = 90;
 					}
 				}
-			}
-			else {
+			} else {
 				for (Obstacle o : game.getObstacles()) {
 					if (o.checkAndFixTopCollision(this)) {
 						jumpAngle = 90;
@@ -176,11 +174,11 @@ public class Mario extends Entity {
 		}
 	}
 
-	public void affectHealth (double diff) {
+	public void affectHealth(double diff) {
 		health += diff;
 
 		if (health <= 0) {
-			game.keyPressed(Keyboard.KEY_R); // Reset
+			((GameState) GameStateEnum.Game.getStateInstance()).keyPressed(Keyboard.KEY_R); // Reset
 		}
 	}
 }

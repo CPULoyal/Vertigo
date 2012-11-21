@@ -3,12 +3,12 @@ package me.matej.Vertigo;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
+
 import me.matej.Vertigo.GameStates.GameStateClass;
 import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.TrueTypeFont;
 
 /**
- *
  * @author matejkramny
  */
 public class Main implements OpenGLDelegate, Runnable {
@@ -26,16 +26,17 @@ public class Main implements OpenGLDelegate, Runnable {
 
 	private String[] args;
 
-	protected Main () { } // Prevents instantiation
+	protected Main() {
+	} // Prevents instantiation
 
-	public static Main getInstance () {
+	public static Main getInstance() {
 		if (singleton == null)
 			singleton = new Main();
 
 		return singleton;
 	}
 
-	public static String getSaveDir () {
+	public static String getSaveDir() {
 		String saveDir = System.getProperty("user.home") + File.separator + ".vertigo" + File.separator;
 
 		File dirFile = new File(saveDir);
@@ -48,13 +49,13 @@ public class Main implements OpenGLDelegate, Runnable {
 	}
 
 	@Override
-	public void run () {
+	public void run() {
 		openGL = new OpenGL(this);
 
 		Font awtFont = new Font("Arial", Font.BOLD, 20);
-		buttonFont = new TrueTypeFont (awtFont, true);
+		buttonFont = new TrueTypeFont(awtFont, true);
 		awtFont = new Font("Arial", Font.BOLD, 25);
-		headerFont = new TrueTypeFont (awtFont, true);
+		headerFont = new TrueTypeFont(awtFont, true);
 
 		try {
 			SoundManager.getSingleton().loadExplosion();
@@ -86,7 +87,7 @@ public class Main implements OpenGLDelegate, Runnable {
 	}
 
 	@Override
-	public void activateState (GameStateEnum state) {
+	public void activateState(GameStateEnum state) {
 		GameStateClass stateClass = state.getStateInstance();
 
 		stateClass.wantsToBeActive = true;
@@ -95,20 +96,22 @@ public class Main implements OpenGLDelegate, Runnable {
 		if (!stateClass.didInit)
 			stateClass.init();
 	}
+
 	@Override
-	public void deactivateState (GameStateEnum state) {
+	public void deactivateState(GameStateEnum state) {
 		if (!state.getStateInstance().wantsToResignActive) {
 			state.getStateInstance().wantsToResignActive = true;
 		}
 	}
+
 	@Override
-	public void changeState (GameStateEnum newState, GameStateEnum oldState) {
+	public void changeState(GameStateEnum newState, GameStateEnum oldState) {
 		activateState(newState);
 		deactivateState(oldState);
 	}
 
 	@Override
-	public void draw () {
+	public void draw() {
 		for (int i = 0; i < GameStateEnum.values().length; i++) {
 			GameStateEnum state = GameStateEnum.values()[i];
 			if (state.getStateInstance().active) {
@@ -119,7 +122,7 @@ public class Main implements OpenGLDelegate, Runnable {
 	}
 
 	@Override
-	public void preUpdate () {
+	public void preUpdate() {
 		for (GameStateEnum state : GameStateEnum.values()) {
 			GameStateClass stateClass = state.getStateInstance();
 
@@ -136,7 +139,7 @@ public class Main implements OpenGLDelegate, Runnable {
 	}
 
 	@Override
-	public void update (int delta) {
+	public void update(int delta) {
 		for (GameStateEnum state : GameStateEnum.values()) {
 			GameStateClass stateClass = state.getStateInstance();
 
@@ -148,17 +151,17 @@ public class Main implements OpenGLDelegate, Runnable {
 	}
 
 	@Override
-	public void displayModeChanged (DisplayMode newDisplayMode) {
+	public void displayModeChanged(DisplayMode newDisplayMode) {
 		for (GameStateEnum state : GameStateEnum.values()) {
 			state.getStateInstance().displayModeChanged(newDisplayMode);
 		}
 	}
 
-	public static OpenGL getOpenGL () {
+	public static OpenGL getOpenGL() {
 		return openGL;
 	}
 
-	public static void main (String[] args) {
+	public static void main(String[] args) {
 		Main main = Main.getInstance();
 		main.args = args;
 		main.run(); // Creates singleton and starts

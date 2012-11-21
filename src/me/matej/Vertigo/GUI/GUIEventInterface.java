@@ -7,9 +7,8 @@ package me.matej.Vertigo.GUI;
 import me.matej.Vertigo.Entities.Entity;
 
 /**
- *
  * @author matejkramny
  */
 public interface GUIEventInterface {
-	public void mouseClicked (Entity element, int index);
+	public void mouseClicked(Entity element, int index);
 }

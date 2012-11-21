@@ -3,43 +3,44 @@ package me.matej.Vertigo.Entities;
 import org.lwjgl.opengl.DisplayMode;
 
 /**
- *
  * @author matejkramny
  */
 public class Vector {
 	public double x, y;
 
-	public Vector () {
+	public Vector() {
 	}
 
 	// Centers the location if size is passed
-	public Vector (double centerX, double centerY, SizeVector size) {
+	public Vector(double centerX, double centerY, SizeVector size) {
 		if (size == null) {
 			this.x = centerX;
 			this.y = centerY;
 		} else {
-			this.x = centerX - size.w/2;
-			this.y = centerY - size.h/2;
+			this.x = centerX - size.w / 2;
+			this.y = centerY - size.h / 2;
 		}
 	}
 
-	public Vector (DisplayMode dm, double xOffset, double yOffset) {
-		this.x = dm.getWidth()/2 + xOffset;
-		this.y = dm.getHeight()/2 + yOffset;
+	public Vector(DisplayMode dm, double xOffset, double yOffset) {
+		this.x = dm.getWidth() / 2 + xOffset;
+		this.y = dm.getHeight() / 2 + yOffset;
 	}
+
 	// Exactly in the center
-	public Vector (DisplayMode dm, SizeVector size) {
-		this.x = dm.getWidth()/2 - size.w/2;
-		this.y = dm.getHeight()/2 - size.h/2;
+	public Vector(DisplayMode dm, SizeVector size) {
+		this.x = dm.getWidth() / 2 - size.w / 2;
+		this.y = dm.getHeight() / 2 - size.h / 2;
 	}
+
 	// Same as above, but offset x (-/+) and/or y (-/+)
-	public Vector (DisplayMode dm, SizeVector size, double xOffset, double yOffset) {
-		this (dm, size);
+	public Vector(DisplayMode dm, SizeVector size, double xOffset, double yOffset) {
+		this(dm, size);
 		this.x += xOffset;
 		this.y += yOffset;
 	}
 
-	public Vector (double x, double y) {
+	public Vector(double x, double y) {
 		this.x = x;
 		this.y = y;
 	}

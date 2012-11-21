@@ -5,30 +5,34 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import me.matej.Vertigo.Entities.*;
 import me.matej.Vertigo.GameStateEnum;
 import me.matej.Vertigo.Main;
 import me.matej.Vertigo.OpenGL;
 import me.matej.Vertigo.SoundManager;
+import me.matej.Vertigo.World.World;
+import me.matej.Vertigo.World.WorldLoader;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 
 /**
- *
  * @author matejkramny
  */
 
 public class GameState extends GameStateClass {
 
-	private Mario mario;
-	private ArrayList<Obstacle> obstacles;
+	private World world;
 
 	public double xOffset;
 
@@ -36,23 +40,10 @@ public class GameState extends GameStateClass {
 
 	@Override
 	public void draw() {
-		Font f = Main.getOpenGL().getFont();
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		f.drawString(10, 10, "World Translated about X by "+(int)xOffset+"px", Color.black);
-		f.drawString(10, 40, Main.getOpenGL().getFps()+" FPS", Color.black);
-		if (getBullets() != null)
-			f.drawString(10, 70, "Bullets: "+getBullets().size(), Color.black);
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		world.draw();
 
-		mario.draw();
-		if (obstacles != null) {
-			for(Obstacle e : obstacles) {
-				if (e != null)
-					e.draw();
-			}
-		}
 		if (bullets != null) {
-			for(Bullet b : bullets) {
+			for (Bullet b : bullets) {
 				if (b != null)
 					b.draw();
 			}
@@ -66,9 +57,9 @@ public class GameState extends GameStateClass {
 	@Override
 	public void update(int delta) {
 		if (!paused) {
-			mario.update(delta);
+			world.getMario().update(delta);
 
-			for (Obstacle o : obstacles) {
+			for (Obstacle o : world.getObstacles()) {
 				o.xOffset = xOffset;
 			}
 
@@ -78,7 +69,7 @@ public class GameState extends GameStateClass {
 					b.update(delta);
 					DisplayMode dm = OpenGL.getDisplayMode();
 					int w = dm.getWidth(), h = dm.getHeight();
-					if (b.loc.x+b.size.w > w || b.loc.x < -b.size.w || b.loc.y+b.size.h > h || b.loc.y < -b.size.h) {
+					if (b.loc.x + b.size.w > w || b.loc.x < -b.size.w || b.loc.y + b.size.h > h || b.loc.y < -b.size.h) {
 						// Remove bullet from stack
 						removeList.add(b);
 					}
@@ -93,12 +84,7 @@ public class GameState extends GameStateClass {
 	@Override
 	public void keyPressed(int key) {
 		if (key == Keyboard.KEY_F3) {
-		    try {
-				this.saveObstacles();
-				System.out.println("Saved obstacles..");
-		    } catch (Exception e) {
-				e.printStackTrace(System.err);
-		    }
+			WorldLoader.saveWorld(world);
 		} else if (key == Keyboard.KEY_ESCAPE && !paused) {
 			GameStateEnum.GameMenu.getStateInstance().init();
 			paused = true;
@@ -112,7 +98,7 @@ public class GameState extends GameStateClass {
 			if (paused)
 				GameStateEnum.GameMenu.getStateInstance().keyPressed(key);
 			else
-				mario.keyPressed(key);
+				world.getMario().keyPressed(key);
 		}
 	}
 
@@ -131,11 +117,11 @@ public class GameState extends GameStateClass {
 			if (index == 0) {
 				Bullet b = new Bullet();
 
-				b.loc = new Vector(dm.getWidth()/2-5, dm.getHeight()/2-5);
+				b.loc = new Vector(dm.getWidth() / 2 - 5, dm.getHeight() / 2 - 5);
 				Color c = b.color;
-				c.r = (float)Math.random();
-				c.g = (float)Math.random();
-				c.b = (float)Math.random();
+				c.r = (float) Math.random();
+				c.g = (float) Math.random();
+				c.b = (float) Math.random();
 				c.a = 1;
 				b.size = new SizeVector(10, 10);
 				double x = Math.random();
@@ -144,12 +130,12 @@ public class GameState extends GameStateClass {
 
 				getBullets().add(b);
 			} else {
-				int mx = Mouse.getX()-10, my = dm.getHeight() - Mouse.getY()-10;
-				int x = dm.getWidth()/2-10, y = dm.getHeight()/2-10;
+				int mx = Mouse.getX() - 10, my = dm.getHeight() - Mouse.getY() - 10;
+				int x = dm.getWidth() / 2 - 10, y = dm.getHeight() / 2 - 10;
 
 				double xDiff = mx - x, yDiff = my - y;
 
-				float actual = (float)Math.abs(Math.toDegrees(Math.atan(yDiff / xDiff)));
+				float actual = (float) Math.abs(Math.toDegrees(Math.atan(yDiff / xDiff)));
 
 				if (xDiff > 0f && yDiff < 0f)
 					actual = 360f - actual;
@@ -180,21 +166,11 @@ public class GameState extends GameStateClass {
 	@Override
 	public void init() {
 		// Uncomment line below to avoid side-effect when switching DM (world resets when dm changes)
-		//this.didInit = true; // We want to get init() again when we start the game for second time..
+		this.didInit = true;
 
-		// Load mario
-		mario = new Mario(new Vector(50, 10), new SizeVector(100, 133));
+		world = WorldLoader.loadWorld(Main.getSaveDir() + "MatejWorld.vertigo.world.json");
 
-		// Load obstacles..
-		try {
-			loadObstacles();
-		} catch (Exception e) {
-			e.printStackTrace(System.err);
-		} finally {
-			System.out.println("Obstacles loaded successfully.");
-		}
-
-		//obstacles = new ArrayList<Obstacle>();
+		/*obstacles = new ArrayList<Obstacle>();
 
 		DisplayMode dm = OpenGL.getDisplayMode();
 
@@ -204,58 +180,33 @@ public class GameState extends GameStateClass {
 						new Obstacle(new Vector(0.0, -1.0), new SizeVector(OpenGL.getDisplayMode().getWidth(), 1), Color.transparent, true),
 						new Obstacle(new Vector(0.0, OpenGL.getDisplayMode().getHeight()), new SizeVector(OpenGL.getDisplayMode().getWidth(), 1), Color.transparent, true)
 		};
-		//obstacles.addAll(Arrays.asList(ents));
+		obstacles.addAll(Arrays.asList(ents));*/
 	}
 
 	@Override
 	public void displayModeChanged(DisplayMode newDisplayMode) {
 		this.init();
+		world.getBackground().displayModeChanged(newDisplayMode);
 	}
 
-	public void setPaused (boolean newPaused) {
+	public void setPaused(boolean newPaused) {
 		paused = newPaused;
-	}
-
-	private static String worldLoc = Main.getSaveDir() + "World.json";
-
-	private void loadObstacles () throws JsonIOException, JsonSyntaxException, IOException {
-		Type obstaclesType = new TypeToken<ArrayList<Obstacle>>(){}.getType();
-
-		System.out.println("Path to world is: "+worldLoc);
-
-		File worldFile = new File(worldLoc);
-		if (!worldFile.exists()) {
-			worldFile.createNewFile();
-			obstacles = new ArrayList<Obstacle>();
-			return;
-		}
-
-		FileReader fr = new FileReader(worldFile);
-		JsonReader reader = new JsonReader(fr);
-		obstacles = new Gson().fromJson(reader, obstaclesType);
-		fr.close();
-	}
-
-	private void saveObstacles () throws IOException {
-		PrintWriter pw = new PrintWriter (new FileWriter(new File(worldLoc)));
-		pw.print(new Gson().toJson(getObstacles()));
-		pw.close();
 	}
 
 	/**
 	 * @return the mario
 	 */
 	public Mario getMario() {
-		return mario;
+		return world.getMario();
 	}
 
 	/**
 	 * @return the obstacles
 	 */
 	public ArrayList<Obstacle> getObstacles() {
-		if (obstacles == null)
-			obstacles = new ArrayList<Obstacle>();
-		return obstacles;
+		assert world != null : "World is null!";
+
+		return world.getObstacles();
 	}
 
 	/**

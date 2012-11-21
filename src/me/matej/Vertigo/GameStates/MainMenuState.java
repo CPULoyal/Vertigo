@@ -1,6 +1,7 @@
 package me.matej.Vertigo.GameStates;
 
 import java.util.HashMap;
+
 import me.matej.Vertigo.Entities.Entity;
 import me.matej.Vertigo.Entities.SizeVector;
 import me.matej.Vertigo.Entities.Vector;
@@ -14,7 +15,6 @@ import org.newdawn.slick.TrueTypeFont;
 import me.matej.Vertigo.Main;
 
 /**
- *
  * @author matejkramny
  */
 public class MainMenuState extends GameStateClass implements GUIEventInterface {
@@ -31,7 +31,8 @@ public class MainMenuState extends GameStateClass implements GUIEventInterface {
 			button.draw();
 	}
 
-	private Entity mouse = new Entity(new Vector(), new SizeVector(5,5), Color.transparent);
+	private Entity mouse = new Entity(new Vector(), new SizeVector(5, 5), Color.transparent);
+
 	@Override
 	public void update(int delta) {
 		for (GUIButton button : buttons.values())
@@ -51,9 +52,9 @@ public class MainMenuState extends GameStateClass implements GUIEventInterface {
 
 	// Implements from GUIEventInterface
 	@Override
-	public void mouseClicked (Entity o, int index) {
-		if (o.equals(buttons.get("startGame"))) {
-			Main.getInstance().changeState(GameStateEnum.Game, GameStateEnum.MainMenu);
+	public void mouseClicked(Entity o, int index) {
+		if (o.equals(buttons.get("worlds"))) {
+			Main.getInstance().changeState(GameStateEnum.Worlds, GameStateEnum.MainMenu);
 		} else if (o.equals(buttons.get("options"))) {
 			// Activate Options screen
 			active = false;
@@ -73,16 +74,16 @@ public class MainMenuState extends GameStateClass implements GUIEventInterface {
 		DisplayMode dm = OpenGL.getDisplayMode();
 		buttons = new HashMap<String, GUIButton>();
 
-		background = new Entity(new Vector(0,0), new SizeVector(dm.getWidth(), dm.getHeight()), new Color(0f, 0f, 1f));
+		background = new Entity(new Vector(0, 0), new SizeVector(dm.getWidth(), dm.getHeight()), new Color(0f, 0f, 1f));
 
-		GUIButton b = new GUIButton("Start Game", Color.black, font, new Vector(dm, SizeVector.buttonSize, 0.0, -100), SizeVector.buttonSize, Color.green, new Color(0.5f, 1f, 0f), this);
-		buttons.put("startGame", b);
+		GUIButton b = new GUIButton("Worlds", Color.black, font, new Vector(dm, SizeVector.buttonSize, 0.0, -100), SizeVector.buttonSize, Color.green, new Color(0.5f, 1f, 0f), this);
+		buttons.put("worlds", b);
 		b = new GUIButton("Options", Color.black, font, new Vector(dm, SizeVector.buttonSize, 0.0, -40), SizeVector.buttonSize, Color.green, new Color(0.5f, 1f, 0f), this);
 		buttons.put("options", b);
 		b = new GUIButton("Exit", Color.black, font, new Vector(dm, SizeVector.buttonSize, 0.0, 20), SizeVector.buttonSize, Color.green, new Color(0.5f, 1f, 0f), this);
 		buttons.put("quit", b);
 
-		buttons.get("startGame").getBorder().configure(new Vector(dm, SizeVector.buttonBorderSize, 0, -100), SizeVector.buttonBorderSize, new Color(0.2f, 0.8f, 0f));
+		buttons.get("worlds").getBorder().configure(new Vector(dm, SizeVector.buttonBorderSize, 0, -100), SizeVector.buttonBorderSize, new Color(0.2f, 0.8f, 0f));
 		buttons.get("options").getBorder().configure(new Vector(dm, SizeVector.buttonBorderSize, 0, -40), SizeVector.buttonBorderSize, new Color(0.2f, 0.8f, 0f));
 		buttons.get("quit").getBorder().configure(new Vector(dm, SizeVector.buttonBorderSize, 0, 20), SizeVector.buttonBorderSize, new Color(0.2f, 0.8f, 0f));
 	}

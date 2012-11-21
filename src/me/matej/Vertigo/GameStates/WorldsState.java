@@ -1,7 +1,5 @@
 package me.matej.Vertigo.GameStates;
 
-import java.util.HashMap;
-
 import me.matej.Vertigo.Entities.Entity;
 import me.matej.Vertigo.Entities.SizeVector;
 import me.matej.Vertigo.Entities.Vector;
@@ -14,10 +12,12 @@ import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
 
+import java.util.HashMap;
+
 /**
  * @author matejkramny
  */
-public class OptionsState extends GameStateClass implements GUIEventInterface {
+public class WorldsState extends GameStateClass implements GUIEventInterface {
 
 	private HashMap<String, GUIButton> buttons;
 
@@ -41,7 +41,9 @@ public class OptionsState extends GameStateClass implements GUIEventInterface {
 	@Override
 	public void mouseClicked(Entity o, int index) {
 		if (o.equals(buttons.get("close"))) {
-			Main.getInstance().changeState(GameStateEnum.MainMenu, GameStateEnum.Options);
+			Main.getInstance().changeState(GameStateEnum.MainMenu, GameStateEnum.Worlds);
+		} else if (o.equals(buttons.get("default"))) {
+			Main.getInstance().changeState(GameStateEnum.Game, GameStateEnum.Worlds);
 		}
 	}
 
@@ -62,6 +64,10 @@ public class OptionsState extends GameStateClass implements GUIEventInterface {
 
 		buttons = new HashMap<String, GUIButton>();
 		DisplayMode dm = OpenGL.getDisplayMode();
+
+		GUIButton defaultWorld = new GUIButton("Default world", Color.black, font, new Vector(dm, SizeVector.buttonSize, 0, -100), SizeVector.buttonSize, Color.green, new Color(0.5f, 1f, 0f), this);
+		defaultWorld.getBorder().configure(new Vector(dm, SizeVector.buttonBorderSize, 0, -100), SizeVector.buttonBorderSize, Color.black);
+		buttons.put("default", defaultWorld);
 
 		GUIButton close = new GUIButton(closeText, Color.black, font, new Vector(dm, SizeVector.buttonSize), SizeVector.buttonSize, Color.green, new Color(0.5f, 1f, 0f), this);
 		close.getBorder().configure(new Vector(dm, SizeVector.buttonBorderSize), SizeVector.buttonBorderSize, Color.black);

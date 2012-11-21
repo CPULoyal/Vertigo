@@ -9,32 +9,33 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
 
 /**
- *
  * @author matejkramny
  */
 public class GUIText extends Entity {
 	private String text;
 	private TrueTypeFont font;
 
-	public GUIText (Vector loc, String text) {
+	public GUIText(Vector loc, String text) {
 		this(loc, text, Main.getOpenGL().getFont());
 	}
-	public GUIText (Vector loc, String text, TrueTypeFont font) {
+
+	public GUIText(Vector loc, String text, TrueTypeFont font) {
 		this(loc, text, font, Color.black);
 	}
-	public GUIText (Vector loc, String text, TrueTypeFont font, Color color) {
+
+	public GUIText(Vector loc, String text, TrueTypeFont font, Color color) {
 		super();
 		this.loc = loc;
 		this.size = new SizeVector(font.getWidth(text), font.getHeight(text));
-		this.loc.x -= this.size.w/2;
-		this.loc.y -= this.size.h/2;
+		this.loc.x -= this.size.w / 2;
+		this.loc.y -= this.size.h / 2;
 		this.color = color;
 		this.font = font;
 		this.text = text;
 	}
 
 	@Override
-	public void draw () {
+	public void draw() {
 		super.drawBegin();
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		super.rotate();

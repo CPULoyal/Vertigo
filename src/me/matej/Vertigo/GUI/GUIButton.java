@@ -1,19 +1,21 @@
 package me.matej.Vertigo.GUI;
 
+import java.awt.*;
 import java.io.IOException;
+
 import me.matej.Vertigo.Entities.Entity;
 import me.matej.Vertigo.Entities.SizeVector;
 import me.matej.Vertigo.Entities.Vector;
 import me.matej.Vertigo.Main;
 import me.matej.Vertigo.OpenGL;
 import me.matej.Vertigo.SoundManager;
-import org.lwjgl.input.Mouse;
+import org.lwjgl.input.*;
+import org.lwjgl.input.Cursor;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
 
 /**
- *
  * @author matejkramny
  */
 public class GUIButton extends Entity {
@@ -27,7 +29,7 @@ public class GUIButton extends Entity {
 	public GUIEventInterface delegate;
 
 	@Override
-	public void draw () {
+	public void draw() {
 		if (border != null)
 			border.draw();
 
@@ -44,12 +46,12 @@ public class GUIButton extends Entity {
 			if (font == null)
 				font = Main.getOpenGL().getFont();
 			int fwidth = font.getWidth(text);
-			font.drawString((float)(loc.x+size.w/2 - fwidth/2), (float)(loc.y+size.h/2 - font.getHeight(text)/2), text, fontColor);
+			font.drawString((float) (loc.x + size.w / 2 - fwidth / 2), (float) (loc.y + size.h / 2 - font.getHeight(text) / 2), text, fontColor);
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 		}
 	}
 
-	public void mouseButtonPressed (int index) {
+	public void mouseButtonPressed(int index) {
 		if (delegate != null) {
 			mouse.loc.x = Mouse.getX();
 			mouse.loc.y = OpenGL.getDisplayMode().getHeight() - Mouse.getY();
@@ -61,20 +63,22 @@ public class GUIButton extends Entity {
 		}
 	}
 
-	public void update (int delta) {
+	public void update(int delta) {
 		mouse.loc.x = Mouse.getX();
 		mouse.loc.y = OpenGL.getDisplayMode().getHeight() - Mouse.getY();
 
-		if (mouse.basicCollide(this))
+		if (mouse.basicCollide(this)) {
 			isHoverState = true;
-		else
+		} else {
 			isHoverState = false;
+		}
 	}
 
-	public GUIButton () {
+	public GUIButton() {
 		super();
 	}
-	public GUIButton (String text, Color fontColor, TrueTypeFont font, Vector loc, SizeVector size, Color color, Color hoverColor, GUIEventInterface delegate) {
+
+	public GUIButton(String text, Color fontColor, TrueTypeFont font, Vector loc, SizeVector size, Color color, Color hoverColor, GUIEventInterface delegate) {
 		this();
 		this.text = text;
 		this.fontColor = fontColor;
@@ -86,10 +90,11 @@ public class GUIButton extends Entity {
 		this.delegate = delegate;
 	}
 
-	public void setColor (Color newColor) {
+	public void setColor(Color newColor) {
 		this.color = newColor;
 	}
-	public void setHoverColor (Color newColor) {
+
+	public void setHoverColor(Color newColor) {
 		this.hoverColor = newColor;
 	}
 

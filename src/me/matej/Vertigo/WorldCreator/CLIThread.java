@@ -3,10 +3,10 @@ package me.matej.Vertigo.WorldCreator;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
+
 import me.matej.Vertigo.WorldCreator.States.WorldState;
 
 /**
- *
  * @author matejkramny
  */
 public class CLIThread implements Runnable {
@@ -14,7 +14,7 @@ public class CLIThread implements Runnable {
 	private WorldState worldState;
 	public boolean shouldTerminate = false;
 
-	public void setWorldState (WorldState worldState) {
+	public void setWorldState(WorldState worldState) {
 		this.worldState = worldState;
 	}
 

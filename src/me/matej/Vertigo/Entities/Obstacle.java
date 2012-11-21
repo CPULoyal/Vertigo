@@ -4,7 +4,6 @@ import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 
 /**
- *
  * @author matejkramny
  */
 public class Obstacle extends Entity {
@@ -12,17 +11,18 @@ public class Obstacle extends Entity {
 	public boolean sticky;
 	//collidesWithOthers...
 
-	public Obstacle (Vector v, SizeVector s, Color c, boolean sticky) {
+	public Obstacle(Vector v, SizeVector s, Color c, boolean sticky) {
 		this(v, s, c);
 		this.sticky = sticky;
 	}
-	public Obstacle (Vector v, SizeVector s, Color c) {
+
+	public Obstacle(Vector v, SizeVector s, Color c) {
 		super(v, s, c);
 		sticky = false;
 	}
 
 	@Override
-	public void draw () {
+	public void draw() {
 		super.drawBegin();
 		if (!sticky)
 			GL11.glTranslated(xOffset, 0, 0);
@@ -33,7 +33,7 @@ public class Obstacle extends Entity {
 	}
 
 	@Override
-	public boolean touchesEntity (Entity o) {
+	public boolean touchesEntity(Entity o) {
 		if (sticky) {
 			return super.basicCollide(o);
 		} else {
@@ -46,7 +46,7 @@ public class Obstacle extends Entity {
 	}
 
 	@Override
-	public boolean basicCollide (Entity other) {
+	public boolean basicCollide(Entity other) {
 		if (sticky) {
 			return super.basicCollide(other);
 		} else {
@@ -59,7 +59,7 @@ public class Obstacle extends Entity {
 	}
 
 	@Override
-	public boolean checkAndFixLeftCollision (Entity o) {
+	public boolean checkAndFixLeftCollision(Entity o) {
 		if (sticky) {
 			return o.checkAndFixLeftCollision(this);
 		} else {
@@ -72,7 +72,7 @@ public class Obstacle extends Entity {
 	}
 
 	@Override
-	public boolean checkAndFixRightCollision (Entity o) {
+	public boolean checkAndFixRightCollision(Entity o) {
 		if (sticky) {
 			return o.checkAndFixRightCollision(this);
 		} else {
@@ -85,7 +85,7 @@ public class Obstacle extends Entity {
 	}
 
 	@Override
-	public boolean checkAndFixTopCollision (Entity o) {
+	public boolean checkAndFixTopCollision(Entity o) {
 		if (sticky) {
 			return o.checkAndFixTopCollision(this);
 		} else {
@@ -98,7 +98,7 @@ public class Obstacle extends Entity {
 	}
 
 	@Override
-	public boolean checkAndFixBottomCollision (Entity o) {
+	public boolean checkAndFixBottomCollision(Entity o) {
 		if (sticky) {
 			return o.checkAndFixBottomCollision(this);
 		} else {
@@ -111,7 +111,7 @@ public class Obstacle extends Entity {
 	}
 
 	@Override
-	public String toString () {
-		return String.format("X:%.3f Y:%.3f W:%.3f H:%.3f Red:%.3f Green:%.3f Blue:%.3f Alpha:%.3f %n", loc.x, loc.y, size.w, size.h, color.r, color.g, color.b, color.a);
+	public String toString() {
+		return super.toString();
 	}
 }

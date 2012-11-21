@@ -12,7 +12,6 @@ import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
 /**
- *
  * @author matejkramny
  */
 public class SplashScreenState extends GameStateClass {
@@ -21,7 +20,7 @@ public class SplashScreenState extends GameStateClass {
 	public long splashTimeLeft;
 
 	@Override
-	public void init () {
+	public void init() {
 		this.didInit = true;
 
 		try {
@@ -35,7 +34,7 @@ public class SplashScreenState extends GameStateClass {
 	}
 
 	@Override
-	public void update (int delta) {
+	public void update(int delta) {
 		splashTimeLeft -= delta;
 		if (splashTimeLeft <= 0) {
 			active = false;
@@ -48,7 +47,7 @@ public class SplashScreenState extends GameStateClass {
 	}
 
 	@Override
-	public void draw () {
+	public void draw() {
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 
 		if (splash != null) {
@@ -61,23 +60,23 @@ public class SplashScreenState extends GameStateClass {
 
 			DisplayMode dp = OpenGL.getDisplayMode();
 
-			GL11.glTranslatef(dp.getWidth()/2 - 384/2, dp.getHeight()/2 - texH/2, 0f);
+			GL11.glTranslatef(dp.getWidth() / 2 - 384 / 2, dp.getHeight() / 2 - texH / 2, 0f);
 
 			GL11.glBegin(GL11.GL_QUADS);
-				GL11.glTexCoord2f(0f,0f);
-				GL11.glVertex2f(0f,0f);
-				GL11.glTexCoord2f(1f,0f);
-				GL11.glVertex2f(texW,0f);
-				GL11.glTexCoord2f(1f,1f);
-				GL11.glVertex2f(texW,texH);
-				GL11.glTexCoord2f(0f,1f);
-				GL11.glVertex2f(0f,texH);
+			GL11.glTexCoord2f(0f, 0f);
+			GL11.glVertex2f(0f, 0f);
+			GL11.glTexCoord2f(1f, 0f);
+			GL11.glVertex2f(texW, 0f);
+			GL11.glTexCoord2f(1f, 1f);
+			GL11.glVertex2f(texW, texH);
+			GL11.glTexCoord2f(0f, 1f);
+			GL11.glVertex2f(0f, texH);
 			GL11.glEnd();
 		} else {
 			Font f = Main.getOpenGL().getFont();
 			String name = "Vertigo";
 			int nameWidth = f.getWidth(name);
-			f.drawString(OpenGL.getDisplayMode().getWidth()/2-nameWidth/2, OpenGL.getDisplayMode().getHeight()/2-10, name, Color.black);
+			f.drawString(OpenGL.getDisplayMode().getWidth() / 2 - nameWidth / 2, OpenGL.getDisplayMode().getHeight() / 2 - 10, name, Color.black);
 		}
 	}
 

@@ -62,6 +62,8 @@ public class WorldState extends GameStateClass {
 
 		System.out.println("Using world from path "+world.getLocation());
 		this.world = world;
+
+		world.setMarioResetAsMario();
 	}
 
 	public Entity getSelectedEntity() {

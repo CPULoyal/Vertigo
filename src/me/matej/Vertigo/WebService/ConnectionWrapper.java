@@ -52,6 +52,9 @@ public class ConnectionWrapper {
 		WorldListing[] arr = listings.toArray(new WorldListing[] {});
 		return arr;
 	}
+	public WorldListing getListing (String id) {
+		return getListings(new String[] { id })[0];
+	}
 
 	public World getWorld (WorldListing listing) {
 		SocketConnection sc = new SocketConnection("localhost", 3000, true);

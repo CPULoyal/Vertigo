@@ -89,7 +89,7 @@ public class GameState extends GameStateClass {
 			GameStateEnum.GameMenu.getStateInstance().init();
 			paused = true;
 		} else if (key == Keyboard.KEY_R) {
-			this.init();
+			world.reset();
 			this.xOffset = 0;
 		} else if (key == Keyboard.KEY_Q) {
 			SoundManager sm = SoundManager.getSingleton();
@@ -178,6 +178,8 @@ public class GameState extends GameStateClass {
 	}
 
 	public void setPaused(boolean newPaused) {
+		if (!GameStateEnum.GameMenu.getStateInstance().didInit)
+			GameStateEnum.GameMenu.getStateInstance().init();
 		paused = newPaused;
 	}
 

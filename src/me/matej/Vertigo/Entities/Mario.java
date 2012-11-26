@@ -55,7 +55,7 @@ public class Mario extends Entity {
 
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		TrueTypeFont font = OpenGL.getFont();
-		String velocityText = "Health: " + (int) health;
+		String velocityText = "Health: " + (int) health + "%";
 		GL11.glTranslated(-font.getWidth(velocityText), -10, 0);
 		font.drawString(-10, font.getHeight(velocityText) / 2 - 7, velocityText, Color.black);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -178,7 +178,7 @@ public class Mario extends Entity {
 
 		if (health <= 0) {
 			((GameState) GameStateEnum.Game.getStateInstance()).keyPressed(Keyboard.KEY_R); // Reset
-			// TODO IS_DEAD! No RESET cus it don't work
+			health = 100;
 		}
 	}
 }

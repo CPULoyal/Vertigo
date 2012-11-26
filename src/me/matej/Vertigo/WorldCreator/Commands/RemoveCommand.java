@@ -17,6 +17,11 @@ public class RemoveCommand extends AbstractCommand {
 	public void execute(String[] args) {
 		ArrayList<Obstacle> os = ((WorldState) GameStateEnum.World.getStateInstance()).getObstacles();
 
+		if (os == null) {
+			System.out.println("No World selected");
+			return;
+		}
+
 		if (args.length != 2) {
 			System.err.println(description);
 			return;

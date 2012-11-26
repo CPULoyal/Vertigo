@@ -168,19 +168,7 @@ public class GameState extends GameStateClass {
 		// Uncomment line below to avoid side-effect when switching DM (world resets when dm changes)
 		this.didInit = true;
 
-		world = WorldLoader.loadWorld(Main.getSaveDir() + "MatejWorld.vertigo.world.json");
-
-		/*obstacles = new ArrayList<Obstacle>();
-
-		DisplayMode dm = OpenGL.getDisplayMode();
-
-		Obstacle[] ents = { new Obstacle(new Vector (0.0, dm.getHeight()-200), new SizeVector(300.0, 20.0), Color.red),
-						new Obstacle(new Vector(300.0, dm.getHeight()-100), new SizeVector(50.0, 20.0), Color.yellow),
-						new Obstacle(new Vector(300.0, OpenGL.getDisplayMode().getHeight()-50), new SizeVector(350.0, 20.0), Color.red),
-						new Obstacle(new Vector(0.0, -1.0), new SizeVector(OpenGL.getDisplayMode().getWidth(), 1), Color.transparent, true),
-						new Obstacle(new Vector(0.0, OpenGL.getDisplayMode().getHeight()), new SizeVector(OpenGL.getDisplayMode().getWidth(), 1), Color.transparent, true)
-		};
-		obstacles.addAll(Arrays.asList(ents));*/
+		world = ((WorldsState)GameStateEnum.Worlds.getStateInstance()).getWorld();
 	}
 
 	@Override

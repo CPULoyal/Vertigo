@@ -19,9 +19,6 @@ public abstract class WorldLoader {
 		try {
 			System.out.println("Loading world from " + location);
 
-			Type worldType = new TypeToken<World>() {
-			}.getType();
-
 			File worldFile = new File(location);
 			if (!worldFile.exists()) {
 				worldFile.createNewFile();
@@ -32,9 +29,10 @@ public abstract class WorldLoader {
 
 			FileReader fr = new FileReader(worldFile);
 			JsonReader reader = new JsonReader(fr);
-			World world = new Gson().fromJson(reader, worldType);
+			World world = new Gson().fromJson(reader, World.class);
 			fr.close();
 
+			// Seems like a bug? world == null, always.
 			if (world == null) {
 				world = WorldGenerator.generateWorld();
 				WorldLoader.saveWorld(world);
@@ -61,7 +59,7 @@ public abstract class WorldLoader {
 		}
 	}
 
-	private static String worldsFileLoc = Main.getSaveDir() + "worlds.vertigo";
+	private static String worldsFileLoc = Main.getSaveDir() + "worlds.list";
 
 	public static String getWorldsLoc() {
 		return worldsFileLoc;
@@ -82,17 +80,31 @@ public abstract class WorldLoader {
 			ArrayList<String> worlds = new ArrayList<String>();
 			String line;
 			while ((line = worldsReader.readLine()) != null) {
+				if (line.startsWith("#")) continue;
+
 				worlds.add(line);
 			}
 
 			worldsReader.close();
 
-			return (String[]) worlds.toArray();
+
+			String[] worldsString;
+			worldsString = worlds.toArray(new String[]{});
+
+			return worldsString;
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
 		}
 
 		return new String[]{};
+	}
+	public static World[] loadWorlds (String[] worlds) {
+		World[] worldsArray = new World[worlds.length];
+		for (int i = 0; i < worlds.length; i++) {
+			worldsArray[i] = WorldLoader.loadWorld(Main.getSaveDir()+worlds[i]);
+		}
+
+		return worldsArray;
 	}
 
 	public static void addWorld(String loc) {

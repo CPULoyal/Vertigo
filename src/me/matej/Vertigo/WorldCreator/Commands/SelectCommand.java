@@ -19,6 +19,12 @@ public class SelectCommand extends AbstractCommand {
 
 		WorldState worldState = ((WorldState) GameStateEnum.World.getStateInstance());
 		String idString = args[1];
+
+		if (worldState.getWorld() == null) {
+			System.out.println("No World selected");
+			return;
+		}
+
 		if ("mario".equals(idString)) {
 			// Select mario
 			worldState.setSelectedEntity(worldState.getWorld().getMario());

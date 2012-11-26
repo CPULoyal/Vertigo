@@ -12,7 +12,6 @@ import org.newdawn.slick.TrueTypeFont;
 /**
  * @author matejkramny
  */
-// Alias Mario
 public class Mario extends Entity {
 
 	public static String relMarioLoc = "me/matej/Vertigo/resources/Mario.png";
@@ -20,7 +19,7 @@ public class Mario extends Entity {
 	//private GameState game;
 	// Gravity pulls mario down (+y) by gravity * delta
 	private final double gravity = 0.0015d;
-	private final double terminalVelocity = 0.8d;
+	private final double terminalVelocity = 0.8d; // Maximum = 0.8 * 17(at 60fps)
 	private double jumpAngle = 90.0; // Angle used for smoothing
 	private double jumpVelocity = 0.0; // Speed at which mario falls (or rises)
 	private final double startJumpVelocity = 0.8; // Max velocity mario can ever achieve
@@ -179,6 +178,7 @@ public class Mario extends Entity {
 
 		if (health <= 0) {
 			((GameState) GameStateEnum.Game.getStateInstance()).keyPressed(Keyboard.KEY_R); // Reset
+			// TODO IS_DEAD! No RESET cus it don't work
 		}
 	}
 }

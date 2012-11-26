@@ -4,6 +4,10 @@ import java.awt.Font;
 import java.io.File;
 
 import me.matej.Vertigo.GameStates.GameStateClass;
+import me.matej.Vertigo.WebService.ConnectionWrapper;
+import me.matej.Vertigo.WebService.SocketConnection;
+import me.matej.Vertigo.WebService.WorldListing;
+import me.matej.Vertigo.World.World;
 import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.TrueTypeFont;
 import me.matej.Vertigo.OpenGL;

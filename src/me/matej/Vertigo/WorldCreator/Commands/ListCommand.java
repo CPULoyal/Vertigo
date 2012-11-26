@@ -4,6 +4,7 @@ import me.matej.Vertigo.Entities.Background;
 import me.matej.Vertigo.Entities.Entity;
 import me.matej.Vertigo.Entities.Mario;
 import me.matej.Vertigo.Entities.Obstacle;
+import me.matej.Vertigo.World.WorldLoader;
 import me.matej.Vertigo.WorldCreator.GameStateEnum;
 import me.matej.Vertigo.WorldCreator.States.WorldState;
 
@@ -14,7 +15,7 @@ import java.util.ArrayList;
  */
 public class ListCommand extends AbstractCommand {
 	{
-		description = "List obstacles and Mario";
+		description = "List obstacles and Mario. Arguments '[id(int|\"mario\"|\"background\"|\"worlds\")]";
 	}
 
 	public void execute(String[] args) {
@@ -25,6 +26,11 @@ public class ListCommand extends AbstractCommand {
 
 		if (args.length == 1) {
 			System.out.println("Listing objects:");
+
+			if (os == null) {
+				System.out.println("No World selected");
+				return;
+			}
 
 			synchronized (os) {
 				for (int i = 0; i < os.size(); i++) {
@@ -42,12 +48,26 @@ public class ListCommand extends AbstractCommand {
 			try {
 				String stringID = args[1];
 				Entity o;
-				if ("mario".equals(stringID))
+				if ("mario".equals(stringID) && os != null)
 					o = worldState.getWorld().getMario();
-				else if ("background".equals(stringID))
+				else if ("background".equals(stringID) && os != null)
 					o = worldState.getWorld().getBackground();
-				else
+				else if ("worlds".equals(stringID)) {
+					// List worlds
+					String[] paths = WorldLoader.getWorlds();
+					for (String path : paths) {
+						System.out.println("Listing World at "+path);
+					}
+
+					return;
+				} else {
+					if (os == null) {
+						System.out.println("No World selected");
+						return;
+					}
+
 					o = os.get(Integer.parseInt(args[1]));
+				}
 
 				System.out.format("Listing #%s %s%n", stringID, o.toString());
 			} catch (NumberFormatException e) {

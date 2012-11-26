@@ -21,6 +21,11 @@ public class ModifyCommand extends AbstractCommand {
 		WorldState worldState = (WorldState) GameStateEnum.World.getStateInstance();
 		ArrayList<Obstacle> os = worldState.getObstacles();
 
+		if (worldState.getWorld() == null) {
+			System.out.println("No World selected");
+			return;
+		}
+
 		// Modifies an attribute of an obstacle
 		if (args.length < 3 || args.length > 5) {
 			System.err.println(description);

@@ -22,6 +22,11 @@ public class SaveCommand extends AbstractCommand {
 			return;
 		}
 
+		if (((WorldState)GameStateEnum.World.getStateInstance()).getWorld() == null) {
+			System.out.println("No World selected");
+			return;
+		}
+
 		WorldLoader.saveWorld(((WorldState) GameStateEnum.World.getStateInstance()).getWorld());
 	}
 }

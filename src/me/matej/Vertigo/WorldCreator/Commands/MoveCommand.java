@@ -17,6 +17,11 @@ public class MoveCommand extends AbstractCommand {
 	public void execute(String[] args) {
 		ArrayList<Obstacle> os = ((WorldState) GameStateEnum.World.getStateInstance()).getObstacles();
 
+		if (os == null) {
+			System.out.println("No World selected");
+			return;
+		}
+
 		// Moves the order of the obstacle
 		if (args.length != 3) {
 			System.err.println(description);
@@ -25,6 +30,7 @@ public class MoveCommand extends AbstractCommand {
 
 		try {
 			int existingID = Integer.parseInt(args[1]), newID = Integer.parseInt(args[2]);
+
 			synchronized (os) {
 				Obstacle exist = os.get(existingID);
 				os.remove(existingID);

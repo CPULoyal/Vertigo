@@ -20,6 +20,11 @@ public class AddCommand extends AbstractCommand {
 	public void execute(String[] args) {
 		ArrayList<Obstacle> os = ((WorldState) GameStateEnum.World.getStateInstance()).getObstacles();
 
+		if (os == null) {
+			System.out.println("No World selected");
+			return;
+		}
+
 		// Adding an element.. Check argument count
 		// Valid: add red green blue x y w h
 		if (args.length != 10) {

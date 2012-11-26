@@ -38,7 +38,8 @@ public class WorldState extends GameStateClass {
 
 	@Override
 	public void draw() {
-		world.draw();
+		if (world != null)
+			world.draw();
 	}
 
 	@Override
@@ -47,7 +48,9 @@ public class WorldState extends GameStateClass {
 	}
 
 	public ArrayList<Obstacle> getObstacles() {
-		return world.getObstacles();
+		if (world != null)
+			return world.getObstacles();
+		return null;
 	}
 
 	public World getWorld() {
@@ -55,6 +58,9 @@ public class WorldState extends GameStateClass {
 	}
 
 	public void setWorld(World world) {
+		assert world != null : "New world null";
+
+		System.out.println("Using world from path "+world.getLocation());
 		this.world = world;
 	}
 
@@ -76,8 +82,9 @@ public class WorldState extends GameStateClass {
 				if (args.length == 1) {
 					System.out.print("Available commands:");
 					for (String name : commands.keySet()) {
-						System.err.format(" %s", name);
+						System.out.format(" %s", name);
 					}
+					System.out.println();
 				} else {
 					// Get command name
 					String cmdName = args[1];
@@ -161,8 +168,12 @@ public class WorldState extends GameStateClass {
 		commands.put("exit", new ExitCommand());
 		commands.put("dm", new DMCommand());
 		commands.put("select", new SelectCommand());
+		commands.put("download", new DownloadCommand());
 
-		world = WorldLoader.loadWorld(Main.getSaveDir() + "MatejWorld.vertigo.world.json");
+		System.out.println("No world loaded. Listing worlds: ");
+		commands.get("list").execute(new String[] { "list", "worlds" });
+
+		world = null;
 
 		cliThread = new CLIThread();
 		cliThread.setWorldState(this);

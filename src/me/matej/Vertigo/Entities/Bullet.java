@@ -10,12 +10,12 @@ import org.newdawn.slick.Color;
 /**
  * @author matejkramny
  */
-public class Bullet extends Entity {
+public class Bullet extends ColouredEntity {
 	public Vector dir; // Direction
 	private boolean didCollide = false;
 
 	public Bullet() {
-		color = new Color(0, 0, 0, 0);
+		super(new Color(0,0,0,0));
 	}
 
 	public void update(int delta) {
@@ -27,7 +27,7 @@ public class Bullet extends Entity {
 
 		if (!didCollide)
 			for (Obstacle o : obstacles) {
-				if (o.basicCollide(this)) {
+				if (o.collidesWith(this)) {
 					didCollide = true;
 					SoundManager sm = SoundManager.getSingleton();
 					sm.getExplosion().playAsSoundEffect((float) Math.random() * 2, 1f, false);
@@ -57,7 +57,7 @@ public class Bullet extends Entity {
 			}
 		}
 
-		if (mario.basicCollide(this)) {
+		if (mario.collidesWith(this)) {
 			// Transform location so system removes this automatically
 			this.loc.x = -this.size.w * 2;
 			this.loc.y = -this.size.h * 2;

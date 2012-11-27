@@ -6,7 +6,7 @@ import org.newdawn.slick.Color;
 /**
  * @author matejkramny
  */
-public class Obstacle extends Entity {
+public class Obstacle extends ColouredEntity {
 	public double xOffset;
 	public boolean sticky;
 	//collidesWithOthers...
@@ -26,19 +26,17 @@ public class Obstacle extends Entity {
 		super.drawBegin();
 		if (!sticky)
 			GL11.glTranslated(xOffset, 0, 0);
-		super.rotate();
-		super.color();
-		super.drawVerts();
+		super.drawVertices();
 		super.drawEnd();
 	}
 
 	@Override
-	public boolean touchesEntity(Entity o) {
+	public boolean touchesWith(Entity o) {
 		if (sticky) {
-			return super.basicCollide(o);
+			return super.touchesWith(o);
 		} else {
 			loc.x += xOffset;
-			boolean touch = super.touchesEntity(o);
+			boolean touch = super.touchesWith(o);
 			loc.x -= xOffset;
 
 			return touch;
@@ -46,25 +44,25 @@ public class Obstacle extends Entity {
 	}
 
 	@Override
-	public boolean basicCollide(Entity other) {
+	public boolean collidesWith(Entity other) {
 		if (sticky) {
-			return super.basicCollide(other);
+			return super.collidesWith(other);
 		} else {
 			Vector origLoc = new Vector(loc.x, loc.y);
 			loc.x += xOffset;
-			boolean collide = super.basicCollide(other);
+			boolean collide = super.collidesWith(other);
 			loc = origLoc;
 			return collide;
 		}
 	}
-
+	// TODO Implement fixCollisionLeft
 	@Override
-	public boolean checkAndFixLeftCollision(Entity o) {
+	public boolean isCollidingLeft(Entity o) {
 		if (sticky) {
-			return o.checkAndFixLeftCollision(this);
+			return o.isCollidingLeft(this);
 		} else {
 			loc.x += xOffset;
-			boolean collide = o.checkAndFixLeftCollision(this);
+			boolean collide = o.isCollidingLeft(this);
 			loc.x -= xOffset;
 
 			return collide;
@@ -72,12 +70,12 @@ public class Obstacle extends Entity {
 	}
 
 	@Override
-	public boolean checkAndFixRightCollision(Entity o) {
+	public boolean isCollidingRight(Entity o) {
 		if (sticky) {
-			return o.checkAndFixRightCollision(this);
+			return o.isCollidingRight(this);
 		} else {
 			loc.x += xOffset;
-			boolean collide = o.checkAndFixRightCollision(this);
+			boolean collide = o.isCollidingRight(this);
 			loc.x -= xOffset;
 
 			return collide;
@@ -85,12 +83,12 @@ public class Obstacle extends Entity {
 	}
 
 	@Override
-	public boolean checkAndFixTopCollision(Entity o) {
+	public boolean isCollidingTop(Entity o) {
 		if (sticky) {
-			return o.checkAndFixTopCollision(this);
+			return o.isCollidingTop(this);
 		} else {
 			loc.x += xOffset;
-			boolean collide = o.checkAndFixTopCollision(this);
+			boolean collide = o.isCollidingTop(this);
 			loc.x -= xOffset;
 
 			return collide;
@@ -98,12 +96,12 @@ public class Obstacle extends Entity {
 	}
 
 	@Override
-	public boolean checkAndFixBottomCollision(Entity o) {
+	public boolean isCollidingBottom(Entity o) {
 		if (sticky) {
-			return o.checkAndFixBottomCollision(this);
+			return o.isCollidingBottom(this);
 		} else {
 			loc.x += xOffset;
-			boolean collide = o.checkAndFixBottomCollision(this);
+			boolean collide = o.isCollidingBottom(this);
 			loc.x -= xOffset;
 
 			return collide;

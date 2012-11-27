@@ -2,6 +2,7 @@ package me.matej.Vertigo.GameStates;
 
 import java.util.HashMap;
 
+import me.matej.Vertigo.Entities.ColouredEntity;
 import me.matej.Vertigo.Entities.Entity;
 import me.matej.Vertigo.Entities.SizeVector;
 import me.matej.Vertigo.Entities.Vector;
@@ -22,7 +23,7 @@ public class MainMenuState extends GameStateClass implements GUIEventInterface {
 	private HashMap<String, GUIButton> buttons;
 	private TrueTypeFont font;
 
-	private Entity background;
+	private ColouredEntity background;
 
 	@Override
 	public void draw() {
@@ -30,8 +31,6 @@ public class MainMenuState extends GameStateClass implements GUIEventInterface {
 		for (GUIButton button : buttons.values())
 			button.draw();
 	}
-
-	private Entity mouse = new Entity(new Vector(), new SizeVector(5, 5), Color.transparent);
 
 	@Override
 	public void update(int delta) {
@@ -74,7 +73,7 @@ public class MainMenuState extends GameStateClass implements GUIEventInterface {
 		DisplayMode dm = OpenGL.getDisplayMode();
 		buttons = new HashMap<String, GUIButton>();
 
-		background = new Entity(new Vector(0, 0), new SizeVector(dm.getWidth(), dm.getHeight()), new Color(0f, 0f, 1f));
+		background = new ColouredEntity(new Vector(0, 0), new SizeVector(dm.getWidth(), dm.getHeight()), new Color(0f, 0f, 1f));
 
 		GUIButton b = new GUIButton("Worlds", Color.black, font, new Vector(dm, SizeVector.buttonSize, 0.0, -100), SizeVector.buttonSize, Color.green, new Color(0.5f, 1f, 0f), this);
 		buttons.put("worlds", b);

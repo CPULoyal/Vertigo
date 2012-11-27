@@ -2,6 +2,7 @@ package me.matej.Vertigo.WorldCreator.Commands;
 
 import me.matej.Vertigo.Entities.Obstacle;
 import me.matej.Vertigo.World.World;
+import me.matej.Vertigo.World.WorldGenerator;
 import me.matej.Vertigo.World.WorldLoader;
 import me.matej.Vertigo.WorldCreator.GameStateEnum;
 import me.matej.Vertigo.WorldCreator.Main;
@@ -14,12 +15,19 @@ import java.util.ArrayList;
  */
 public class LoadCommand extends AbstractCommand {
 	{
-		description = "Load obstacles. Arguments: 'path(string)'. Use 'list worlds' to get list of worlds.";
+		description = "Load obstacles. Arguments: 'path(string|\"new\")'. Use 'list worlds' to get list of worlds.";
 	}
 
 	public void execute(String[] args) {
 		if (args.length != 2) {
 			System.out.println(description);
+			return;
+		}
+
+		if (args[1].equals("new")) {
+			World w = WorldGenerator.generateWorld();
+			((WorldState)GameStateEnum.World.getStateInstance()).setWorld(w);
+
 			return;
 		}
 

@@ -118,7 +118,6 @@ public class WorldsState extends GameStateClass implements GUIEventInterface {
 				}
 			}
 		}
-
 	}
 
 	@Override

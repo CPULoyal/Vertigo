@@ -1,9 +1,6 @@
 package me.matej.Vertigo.WorldCreator.Commands;
 
-import me.matej.Vertigo.Entities.Background;
-import me.matej.Vertigo.Entities.Entity;
-import me.matej.Vertigo.Entities.Mario;
-import me.matej.Vertigo.Entities.Obstacle;
+import me.matej.Vertigo.Entities.*;
 import me.matej.Vertigo.WorldCreator.GameStateEnum;
 import me.matej.Vertigo.WorldCreator.States.WorldState;
 
@@ -69,13 +66,13 @@ public class ModifyCommand extends AbstractCommand {
 			else if (property.equals("y") && !(o instanceof Background))
 				o.loc.y = getValueDouble(o.loc.y, Double.parseDouble(val), relative);
 			else if (property.equals("r"))
-				o.color.r = getValueFloat(o.color.r, Float.parseFloat(val), relative, true);
+				((ColouredEntity)o).color.r = getValueFloat(((ColouredEntity)o).color.r, Float.parseFloat(val), relative, true);
 			else if (property.equals("g"))
-				o.color.g = getValueFloat(o.color.g, Float.parseFloat(val), relative, true);
+				((ColouredEntity)o).color.g = getValueFloat(((ColouredEntity)o).color.g, Float.parseFloat(val), relative, true);
 			else if (property.equals("b"))
-				o.color.b = getValueFloat(o.color.b, Float.parseFloat(val), relative, true);
+				((ColouredEntity)o).color.b = getValueFloat(((ColouredEntity)o).color.b, Float.parseFloat(val), relative, true);
 			else if (property.equals("a"))
-				o.color.a = getValueFloat(o.color.a, Float.parseFloat(val), relative);
+				((ColouredEntity)o).color.a = getValueFloat(((ColouredEntity)o).color.a, Float.parseFloat(val), relative);
 			else if (property.equals("sticky") && o instanceof Obstacle)
 				((Obstacle) o).sticky = Boolean.parseBoolean(val);
 			else if (property.equals("w") && !(o instanceof Background))

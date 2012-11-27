@@ -7,7 +7,7 @@ import org.newdawn.slick.Color;
 /**
  * @author matejkramny
  */
-public class Background extends Entity {
+public class Background extends ColouredEntity {
 	public Background(SizeVector size, Color c) {
 		super(new Vector(0, 0), size, c);
 	}
@@ -22,43 +22,38 @@ public class Background extends Entity {
 	}
 
 	@Override
-	public boolean touchesEntity(Entity o) {
+	public boolean touchesWith(Entity o) {
 		return false;
 	}
 
 	@Override
-	public boolean basicCollide(Entity other) {
+	public boolean collidesWith(Entity other) {
 		return false;
 	}
 
 	@Override
-	public boolean checkAndFixLeftCollision(Entity o) {
+	public boolean isCollidingBottom(Entity o) {
 		return false;
 	}
 
 	@Override
-	public boolean checkAndFixRightCollision(Entity o) {
+	public boolean isCollidingTop(Entity o) {
 		return false;
 	}
 
 	@Override
-	public boolean checkAndFixTopCollision(Entity o) {
+	public boolean isCollidingLeft(Entity o) {
 		return false;
 	}
 
 	@Override
-	public boolean checkAndFixBottomCollision(Entity o) {
+	public boolean isCollidingRight(Entity o) {
 		return false;
 	}
 
 	public void displayModeChanged(DisplayMode newDisplayMode) {
 		size.w = newDisplayMode.getWidth();
 		size.h = newDisplayMode.getHeight();
-	}
-
-	@Override
-	public String toString() {
-		return String.format("r:%.3f g:%.3f b:%.3f a:%.3f", color.r, color.g, color.b, color.a);
 	}
 
 }

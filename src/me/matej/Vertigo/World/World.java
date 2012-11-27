@@ -31,7 +31,7 @@ public class World {
 		obstacles = new ArrayList<Obstacle>();
 		mario = new Mario(new Vector(0, 0), new SizeVector(100, 133));
 		marioReset = new Mario(new Vector(0,0), new SizeVector(100, 133));
-		location = Main.getSaveDir() + "MatejWorld.vertigo.world.json";
+		location = Main.getSaveDir() + ((int)Math.random()*1000) + new Date().getTime() + ".vertigo.world.json";
 		seed = "nothing yet";
 		created = new Date().getTime();
 	}

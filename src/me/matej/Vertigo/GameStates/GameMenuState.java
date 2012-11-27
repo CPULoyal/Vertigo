@@ -1,5 +1,6 @@
 package me.matej.Vertigo.GameStates;
 
+import me.matej.Vertigo.Entities.ColouredEntity;
 import me.matej.Vertigo.GUI.GUIText;
 
 import java.util.HashMap;
@@ -22,10 +23,9 @@ import org.newdawn.slick.TrueTypeFont;
  */
 public class GameMenuState extends GameStateClass implements GUIEventInterface {
 
-	private Entity background;
-	private Entity buttonsBackground;
+	private ColouredEntity background;
+	private ColouredEntity buttonsBackground;
 	private HashMap<String, GUIButton> buttons;
-	private Entity mouse = new Entity(new Vector(0, 0), new SizeVector(3, 3), Color.transparent);
 	private GUIText gamePausedText;
 
 	@Override
@@ -63,8 +63,8 @@ public class GameMenuState extends GameStateClass implements GUIEventInterface {
 		TrueTypeFont font = Main.buttonFont;
 
 		DisplayMode dm = OpenGL.getDisplayMode();
-		background = new Entity(new Vector(0, 0), new SizeVector(dm), new Color(0.1f, 0.1f, 0.1f, 0.4f));
-		buttonsBackground = new Entity(new Vector(dm, new SizeVector(SizeVector.buttonBorderSize.w + 70, SizeVector.buttonBorderSize.h * 4 + 20)), new SizeVector(SizeVector.buttonBorderSize.w + 70, SizeVector.buttonBorderSize.h * 4 + 70), new Color(0.1f, 0.1f, 0.1f));
+		background = new ColouredEntity(new Vector(0, 0), new SizeVector(dm), new Color(0.1f, 0.1f, 0.1f, 0.4f));
+		buttonsBackground = new ColouredEntity(new Vector(dm, new SizeVector(SizeVector.buttonBorderSize.w + 70, SizeVector.buttonBorderSize.h * 4 + 20)), new SizeVector(SizeVector.buttonBorderSize.w + 70, SizeVector.buttonBorderSize.h * 4 + 70), new Color(0.1f, 0.1f, 0.1f));
 
 		buttons = new HashMap<String, GUIButton>();
 		buttons.put("exit", new GUIButton("Main menu", Color.black, font, new Vector(dm, SizeVector.buttonSize, 0.0, 100.0), SizeVector.buttonSize, Color.green, new Color(0.5f, 1f, 0f), this));

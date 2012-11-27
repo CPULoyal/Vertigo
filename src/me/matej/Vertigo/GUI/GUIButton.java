@@ -3,6 +3,7 @@ package me.matej.Vertigo.GUI;
 import java.awt.*;
 import java.io.IOException;
 
+import me.matej.Vertigo.Entities.ColouredEntity;
 import me.matej.Vertigo.Entities.Entity;
 import me.matej.Vertigo.Entities.SizeVector;
 import me.matej.Vertigo.Entities.Vector;
@@ -18,7 +19,7 @@ import org.newdawn.slick.TrueTypeFont;
 /**
  * @author matejkramny
  */
-public class GUIButton extends Entity {
+public class GUIButton extends ColouredEntity {
 	private GUIBorder border = new GUIBorder();
 	private TrueTypeFont font;
 	private Color fontColor = Color.black;
@@ -56,7 +57,7 @@ public class GUIButton extends Entity {
 			mouse.loc.x = Mouse.getX();
 			mouse.loc.y = OpenGL.getDisplayMode().getHeight() - Mouse.getY();
 
-			if (index == 0 && mouse.basicCollide(this)) {
+			if (index == 0 && mouse.collidesWith(this)) {
 				delegate.mouseClicked(this, index);
 				SoundManager.getSingleton().getClick().playAsSoundEffect(1f, 1f, false);
 			}
@@ -67,7 +68,7 @@ public class GUIButton extends Entity {
 		mouse.loc.x = Mouse.getX();
 		mouse.loc.y = OpenGL.getDisplayMode().getHeight() - Mouse.getY();
 
-		if (mouse.basicCollide(this)) {
+		if (mouse.collidesWith(this)) {
 			isHoverState = true;
 		} else {
 			isHoverState = false;

@@ -131,7 +131,7 @@ final public class OpenGL {
 		Keyboard.enableRepeatEvents(true);
 
 		Display.setVSyncEnabled(false);
-		Display.setResizable(true);
+		Display.setResizable(false);
 
 		GL11.glClearColor(1f, 1f, 1f, 1.0f);
 		GL11.glClearDepth(1);
@@ -144,6 +144,8 @@ final public class OpenGL {
 			int k = Keyboard.getEventKey();
 
 			if (!ignoresDefaultKeypress && k == Keyboard.KEY_F) {
+				continue;
+				/*
 				fullscreen = !fullscreen;
 
 				try {
@@ -160,6 +162,7 @@ final public class OpenGL {
 				} catch (LWJGLException e) {
 					e.printStackTrace(System.err);
 				}
+				*/
 			} else {
 				delegate.keyPressed(k);
 			}

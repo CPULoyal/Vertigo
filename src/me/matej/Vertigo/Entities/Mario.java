@@ -12,9 +12,9 @@ import org.newdawn.slick.TrueTypeFont;
 /**
  * @author matejkramny
  */
-public class Mario extends Entity {
+public class Mario extends ColouredEntity {
 
-	public static String relMarioLoc = "me/matej/Vertigo/resources/Mario.png";
+	//public static String relMarioLoc = "me/matej/Vertigo/resources/Mario.png";
 
 	//private GameState game;
 	// Gravity pulls mario down (+y) by gravity * delta
@@ -29,8 +29,7 @@ public class Mario extends Entity {
 	private double health; // Mario's health - starts at 100
 
 	public Mario(Vector v, SizeVector size) {
-		super(v, size); //, relMarioLoc
-		color = new Color(0.3f, 0.3f, .3f); // not textured so needs a colour
+		super(v, size, new Color(0.3f, 0.3f, .3f)); //, relMarioLoc
 		health = 100;
 	}
 
@@ -43,6 +42,9 @@ public class Mario extends Entity {
 	public void draw() {
 		super.draw();
 
+
+		// Health bar - make another colouredEntity for this
+
 		GL11.glLoadIdentity();
 		GL11.glColor3d(1, 0, 0);
 		GL11.glTranslated(OpenGL.getDisplayMode().getWidth() - 110, 10, 0);
@@ -52,7 +54,7 @@ public class Mario extends Entity {
 		GL11.glVertex2d(health, 20);
 		GL11.glVertex2d(0, 20);
 		GL11.glEnd();
-
+		// Use TextGUI
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		TrueTypeFont font = OpenGL.getFont();
 		String velocityText = "Health: " + (int) health + "%";
@@ -63,7 +65,7 @@ public class Mario extends Entity {
 
 	private boolean isMidAir() {
 		for (Obstacle o : ((GameState) GameStateEnum.Game.getStateInstance()).getObstacles()) {
-			if (o.touchesEntity(this))
+			if (o.touchesWith(this))
 				return false;
 		}
 
@@ -115,7 +117,7 @@ public class Mario extends Entity {
 			}
 
 			for (Obstacle o : game.getObstacles()) {
-				o.checkAndFixLeftCollision(this);
+				o.isCollidingLeft(this);
 			}
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_D) && !Keyboard.isKeyDown(Keyboard.KEY_A)) {
@@ -127,7 +129,7 @@ public class Mario extends Entity {
 			}
 
 			for (Obstacle o : game.getObstacles()) {
-				o.checkAndFixRightCollision(this);
+				o.isCollidingRight(this);
 			}
 		}
 
@@ -147,7 +149,7 @@ public class Mario extends Entity {
 			if (jumpVelocity < 0.0) {
 				falling = true;
 				for (Obstacle o : game.getObstacles()) {
-					if (o.checkAndFixBottomCollision(this)) {
+					if (o.isCollidingBottom(this)) {
 						if (wasJumping) {
 							wasJumping = false;
 							lastJumpEnd = System.currentTimeMillis();
@@ -162,7 +164,7 @@ public class Mario extends Entity {
 				}
 			} else {
 				for (Obstacle o : game.getObstacles()) {
-					if (o.checkAndFixTopCollision(this)) {
+					if (o.isCollidingTop(this)) {
 						jumpAngle = 90;
 						falling = true;
 						marioAttractedByGravity = true;

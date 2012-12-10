@@ -10,8 +10,7 @@ import me.matej.Vertigo.Entities.SizeVector;
 import me.matej.Vertigo.Entities.Vector;
 import me.matej.Vertigo.GUI.GUIButton;
 import me.matej.Vertigo.GUI.GUIEventInterface;
-import me.matej.Vertigo.GameStateEnum;
-import me.matej.Vertigo.Main;
+import me.matej.Vertigo.GameMain;
 import me.matej.Vertigo.OpenGL;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.DisplayMode;
@@ -46,7 +45,7 @@ public class GameMenuState extends GameStateClass implements GUIEventInterface {
 	@Override
 	public void keyPressed(int key) {
 		if (key == Keyboard.KEY_ESCAPE) {
-			((GameState) GameStateEnum.Game.getStateInstance()).setPaused(false);
+			((GameState) GameMain.states.get("game")).setPaused(false);
 		}
 	}
 
@@ -60,7 +59,7 @@ public class GameMenuState extends GameStateClass implements GUIEventInterface {
 	public void init() {
 		this.didInit = true;
 
-		TrueTypeFont font = Main.buttonFont;
+		TrueTypeFont font = GameMain.buttonFont;
 
 		DisplayMode dm = OpenGL.getDisplayMode();
 		background = new ColouredEntity(new Vector(0, 0), new SizeVector(dm), new Color(0.1f, 0.1f, 0.1f, 0.4f));
@@ -74,7 +73,7 @@ public class GameMenuState extends GameStateClass implements GUIEventInterface {
 		buttons.put("options", new GUIButton("Options", Color.black, font, new Vector(dm, SizeVector.buttonSize, 0.0, 40), SizeVector.buttonSize, Color.green, new Color(0.5f, 1f, 0f), this));
 		buttons.get("options").getBorder().configure(new Vector(dm, SizeVector.buttonBorderSize, 0, 40), SizeVector.buttonBorderSize, new Color(0.2f, 0.8f, 0f));
 
-		gamePausedText = new GUIText(new Vector(dm, 0, -70), "Game Paused", Main.headerFont, Color.white);
+		gamePausedText = new GUIText(new Vector(dm, 0, -70), "Game Paused", GameMain.headerFont, Color.white);
 	}
 
 	@Override
@@ -85,10 +84,10 @@ public class GameMenuState extends GameStateClass implements GUIEventInterface {
 	@Override
 	public void mouseClicked(Entity element, int index) {
 		if (element.equals(buttons.get("exit")) && index == 0) {
-			Main.getInstance().changeState(GameStateEnum.MainMenu, GameStateEnum.Game);
-			((GameState) GameStateEnum.Game.getStateInstance()).setPaused(false);
+			GameMain.instance().changeState(GameMain.states.get("mainMenu"), GameMain.states.get("game"));
+			((GameState) GameMain.states.get("game")).setPaused(false);
 		} else if (element.equals(buttons.get("close")) && index == 0) {
-			((GameState) GameStateEnum.Game.getStateInstance()).setPaused(false);
+			((GameState) GameMain.states.get("game")).setPaused(false);
 		} else if (element.equals(buttons.get("options")) && index == 0) {
 			// Display options state
 		}

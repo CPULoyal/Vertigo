@@ -1,0 +1,6 @@
+Name: Vertigo application
+Main-Class: me.matej.Vertigo.GameMain
+Build-Date: Fri Dec  7 13:13:05 GMT 2012
+Default-Args: 
+Class-Path: libs/lwjgl/lzma.jar libs/lwjgl/slick-util.jar libs/lwjgl/lwjgl_util_applet.jar libs/lwjgl/lwjgl.jar libs/lwjgl/lwjgl-debug.jar libs/lwjgl/asm-debug-all.jar libs/lwjgl/slick.jar libs/lwjgl/jinput.jar libs/lwjgl/lwjgl_util.jar libs/lwjgl/AppleJavaExtensions.jar libs/lwjgl/lwjgl_test.jar libs/google-gson-2.2.2/gson-2.2.2-sources.jar libs/google-gson-2.2.2/gson-2.2.2.jar libs/google-gson-2.2.2/gson-2.2.2-javadoc.jar 
+

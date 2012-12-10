@@ -1,7 +1,6 @@
 package me.matej.Vertigo.GameStates;
 
-import me.matej.Vertigo.GameStateEnum;
-import me.matej.Vertigo.Main;
+import me.matej.Vertigo.GameMain;
 import me.matej.Vertigo.OpenGL;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
@@ -38,8 +37,8 @@ public class SplashScreenState extends GameStateClass {
 		splashTimeLeft -= delta;
 		if (splashTimeLeft <= 0) {
 			active = false;
-			GameStateEnum.MainMenu.getStateInstance().init();
-			GameStateEnum.MainMenu.getStateInstance().active = true;
+			GameMain.states.get("mainMenu").init();
+			GameMain.states.get("mainMenu").active = true;
 			splashTimeLeft = 0;
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			//main.gamePaused = false;
@@ -73,7 +72,7 @@ public class SplashScreenState extends GameStateClass {
 			GL11.glVertex2f(0f, texH);
 			GL11.glEnd();
 		} else {
-			Font f = Main.getOpenGL().getFont();
+			Font f = GameMain.getOpenGL().getFont();
 			String name = "Vertigo";
 			int nameWidth = f.getWidth(name);
 			f.drawString(OpenGL.getDisplayMode().getWidth() / 2 - nameWidth / 2, OpenGL.getDisplayMode().getHeight() / 2 - 10, name, Color.black);

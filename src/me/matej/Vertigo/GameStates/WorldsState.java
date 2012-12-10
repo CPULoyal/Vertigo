@@ -5,19 +5,17 @@ import me.matej.Vertigo.Entities.SizeVector;
 import me.matej.Vertigo.Entities.Vector;
 import me.matej.Vertigo.GUI.GUIButton;
 import me.matej.Vertigo.GUI.GUIEventInterface;
-import me.matej.Vertigo.GameStateEnum;
-import me.matej.Vertigo.Main;
+import me.matej.Vertigo.GameMain;
 import me.matej.Vertigo.OpenGL;
 import me.matej.Vertigo.WebService.ConnectionWrapper;
 import me.matej.Vertigo.WebService.WorldListing;
 import me.matej.Vertigo.World.World;
+import me.matej.Vertigo.World.WorldGenerator;
 import me.matej.Vertigo.World.WorldLoader;
 import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
 
-import java.io.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -75,8 +73,8 @@ public class WorldsState extends GameStateClass implements GUIEventInterface {
 
 								clickedWorld = wrapper.getWorld(listing);
 
-								Main.getInstance().changeState(GameStateEnum.Game, GameStateEnum.Worlds);
-								((GameState)GameStateEnum.Game.getStateInstance()).setPaused(true);
+								GameMain.instance().changeState(GameMain.states.get("game"), GameMain.states.get("worlds"));
+								((GameState)GameMain.states.get("game")).setPaused(true);
 							}
 						} catch (NumberFormatException nfx) {
 							nfx.printStackTrace(System.err);
@@ -86,9 +84,13 @@ public class WorldsState extends GameStateClass implements GUIEventInterface {
 			}
 		} else {
 			if (o.equals(buttons.get("close"))) {
-				Main.getInstance().changeState(GameStateEnum.MainMenu, GameStateEnum.Worlds);
+				GameMain.instance().changeState(GameMain.states.get("mainMenu"), GameMain.states.get("worlds"));
+			} else if (o.equals(buttons.get("new"))) {
+				this.clickedWorld = WorldGenerator.generateWorld();
+				GameMain.instance().changeState(GameMain.states.get("game"), GameMain.states.get("worlds"));
+				((GameState)GameMain.states.get("game")).setPaused(true);
 			} else if (o.equals(buttons.get("default"))) {
-				Main.getInstance().changeState(GameStateEnum.Game, GameStateEnum.Worlds);
+				GameMain.instance().changeState(GameMain.states.get("game"), GameMain.states.get("worlds"));
 			} else if (o.equals(buttons.get("serverWorlds"))) {
 				showsServerWorlds = true;
 				if (serverButtons == null) {
@@ -104,12 +106,12 @@ public class WorldsState extends GameStateClass implements GUIEventInterface {
 								String worldPath = worlds[id];
 
 								// Load this world
-								clickedWorld = WorldLoader.loadWorld(Main.getSaveDir()+worldPath);
+								clickedWorld = WorldLoader.loadWorld(GameMain.getSaveDir()+worldPath);
 
 								assert clickedWorld != null : "World not loaded";
 
-								Main.getInstance().changeState(GameStateEnum.Game, GameStateEnum.Worlds);
-								((GameState)GameStateEnum.Game.getStateInstance()).setPaused(true); // If not paused, delta gets too big from blocking IO (loading world) and mario falls through the ground.. TODO Loading screen.. Progress bar?
+								GameMain.instance().changeState(GameMain.states.get("game"), GameMain.states.get("worlds"));
+								((GameState)GameMain.states.get("game")).setPaused(true); // If not paused, delta gets too big from blocking IO (loading world) and mario falls through the ground.. TODO Loading screen.. Progress bar?
 							}
 						} catch (NumberFormatException nfx) {
 							nfx.printStackTrace(System.err);
@@ -137,7 +139,7 @@ public class WorldsState extends GameStateClass implements GUIEventInterface {
 	public void init() {
 		this.didInit = true;
 
-		font = Main.buttonFont;
+		font = GameMain.buttonFont;
 
 		buttons = new HashMap<String, GUIButton>();
 		DisplayMode dm = OpenGL.getDisplayMode();
@@ -151,7 +153,13 @@ public class WorldsState extends GameStateClass implements GUIEventInterface {
 			buttons.put("worldButton"+i, btn);
 		}
 
-		GUIButton btn = new GUIButton("Server Worlds", Color.black, font, new Vector(dm, SizeVector.buttonSize, 0, baseY + 70 * i), SizeVector.buttonSize, Color.green, new Color(0.5f, 1f, 0f), this);
+		GUIButton btn = new GUIButton("New", Color.black, font, new Vector(dm, SizeVector.buttonSize, 0, baseY + 65 * i), SizeVector.buttonSize, Color.green, new Color(0.5f, 1f, 0f), this);
+		btn.getBorder().configure(new Vector(dm, SizeVector.buttonBorderSize, 0, baseY + 65 * i), SizeVector.buttonBorderSize, Color.black);
+		buttons.put("new", btn);
+
+		i++;
+
+		btn = new GUIButton("Server Worlds", Color.black, font, new Vector(dm, SizeVector.buttonSize, 0, baseY + 70 * i), SizeVector.buttonSize, Color.green, new Color(0.5f, 1f, 0f), this);
 		btn.getBorder().configure(new Vector(dm, SizeVector.buttonBorderSize, 0, baseY + 70 * i), SizeVector.buttonBorderSize, Color.black);
 		buttons.put("serverWorlds", btn);
 

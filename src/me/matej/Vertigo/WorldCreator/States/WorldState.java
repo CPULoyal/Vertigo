@@ -111,7 +111,7 @@ public class WorldState extends GameStateClass {
 		} else if (key == Keyboard.KEY_ESCAPE) {
 			System.exit(0);
 		} else if (key == Keyboard.KEY_R) {
-			//Main.getInstance().startGameThread();   // Not working
+			//GameMain.instance().startGameThread();   // Not working
 		} else if (key == Keyboard.KEY_LEFT) {
 			if (selectedEntity != null) {
 				selectedEntity.loc.x -= 1;

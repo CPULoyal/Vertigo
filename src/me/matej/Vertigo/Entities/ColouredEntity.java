@@ -34,6 +34,7 @@ public class ColouredEntity extends Entity implements Drawable {
 	public void drawBegin() {
 		GL11.glLoadIdentity();
 		GL11.glPushMatrix();
+		GL11.glColor4f(color.r, color.g, color.b, color.a);
 	}
 
 	public void drawEnd() {
@@ -41,6 +42,7 @@ public class ColouredEntity extends Entity implements Drawable {
 	}
 
 	public void drawVertices() {
+		GL11.glTranslated(loc.x, loc.y, 0);
 		GL11.glBegin(GL11.GL_QUADS);
 		{
 			GL11.glVertex2d(0, 0);

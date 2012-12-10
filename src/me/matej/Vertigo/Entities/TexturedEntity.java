@@ -57,6 +57,7 @@ public class TexturedEntity extends Entity implements Drawable {
 
 	@Override
 	public void drawVertices() {
+		GL11.glTranslated(loc.x, loc.y, 0);
 		Color.white.bind();
 		texture.bind();
 		GL11.glBegin(GL11.GL_QUADS);

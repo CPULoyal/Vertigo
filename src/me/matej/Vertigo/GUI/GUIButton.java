@@ -1,20 +1,18 @@
 package me.matej.Vertigo.GUI;
 
-import java.awt.*;
-import java.io.IOException;
-
 import me.matej.Vertigo.Entities.ColouredEntity;
 import me.matej.Vertigo.Entities.Entity;
 import me.matej.Vertigo.Entities.SizeVector;
 import me.matej.Vertigo.Entities.Vector;
-import me.matej.Vertigo.Main;
+import me.matej.Vertigo.GameMain;
 import me.matej.Vertigo.OpenGL;
 import me.matej.Vertigo.SoundManager;
 import org.lwjgl.input.*;
-import org.lwjgl.input.Cursor;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
+
+import java.util.Date;
 
 /**
  * @author matejkramny
@@ -29,6 +27,8 @@ public class GUIButton extends ColouredEntity {
 	private boolean isHoverState = false;
 	public GUIEventInterface delegate;
 
+	private long startHover;
+
 	@Override
 	public void draw() {
 		if (border != null)
@@ -37,7 +37,12 @@ public class GUIButton extends ColouredEntity {
 		if (isHoverState) {
 			Color c = color; // Keeping the reference safe from garbage collector
 			color = hoverColor;
-			super.draw();
+			super.drawBegin();
+			long diff = startHover - new Date().getTime();
+			if (diff > 10000)
+			GL11.glScaled(diff / 1000, diff / 1000, 0);
+			super.drawVertices();
+			super.drawEnd();
 			color = c; // Restore the color
 		} else
 			super.draw();
@@ -45,7 +50,7 @@ public class GUIButton extends ColouredEntity {
 		if (text != null && text.length() != 0) {
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			if (font == null)
-				font = Main.getOpenGL().getFont();
+				font = GameMain.getOpenGL().getFont();
 			int fwidth = font.getWidth(text);
 			font.drawString((float) (loc.x + size.w / 2 - fwidth / 2), (float) (loc.y + size.h / 2 - font.getHeight(text) / 2), text, fontColor);
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -69,6 +74,9 @@ public class GUIButton extends ColouredEntity {
 		mouse.loc.y = OpenGL.getDisplayMode().getHeight() - Mouse.getY();
 
 		if (mouse.collidesWith(this)) {
+			if (!isHoverState) {
+				startHover = new Date().getTime();
+			}
 			isHoverState = true;
 		} else {
 			isHoverState = false;

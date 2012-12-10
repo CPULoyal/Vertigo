@@ -2,7 +2,7 @@ package me.matej.Vertigo.Entities;
 
 import java.util.ArrayList;
 
-import me.matej.Vertigo.GameStateEnum;
+import me.matej.Vertigo.GameMain;
 import me.matej.Vertigo.GameStates.GameState;
 import me.matej.Vertigo.SoundManager;
 import org.newdawn.slick.Color;
@@ -22,8 +22,8 @@ public class Bullet extends ColouredEntity {
 		loc.x += dir.x * delta / 10;
 		loc.y += dir.y * delta / 10;
 
-		ArrayList<Obstacle> obstacles = ((GameState) (GameStateEnum.Game.getStateInstance())).getObstacles();
-		Mario mario = ((GameState) (GameStateEnum.Game.getStateInstance())).getMario();
+		ArrayList<Obstacle> obstacles = ((GameState)GameMain.states.get("game")).getObstacles();
+		Mario mario = ((GameState)GameMain.states.get("game")).getMario();
 
 		if (!didCollide)
 			for (Obstacle o : obstacles) {

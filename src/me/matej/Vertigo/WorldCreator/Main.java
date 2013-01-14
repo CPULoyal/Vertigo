@@ -3,11 +3,8 @@ package me.matej.Vertigo.WorldCreator;
 import java.awt.Font;
 import java.io.File;
 
+import me.matej.Vertigo.GameMain;
 import me.matej.Vertigo.GameStates.GameStateClass;
-import me.matej.Vertigo.WebService.ConnectionWrapper;
-import me.matej.Vertigo.WebService.SocketConnection;
-import me.matej.Vertigo.WebService.WorldListing;
-import me.matej.Vertigo.World.World;
 import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.TrueTypeFont;
 import me.matej.Vertigo.OpenGL;
@@ -29,7 +26,7 @@ public class Main implements OpenGLDelegate, Runnable {
 	public static final String displayName = "Vertigo World Creator";
 	public static final String version = "0.0.01";
 
-	private me.matej.Vertigo.Main gameThread; // At some point the worldCreator starts the game..
+	private GameMain gameThread; // At some point the worldCreator starts the game..
 
 	protected Main() {
 	} // Prevents instantiation
@@ -41,14 +38,14 @@ public class Main implements OpenGLDelegate, Runnable {
 		return singleton;
 	}
 
-	public me.matej.Vertigo.Main getGameThread() {
+	public GameMain getGameThread() {
 		return gameThread;
 	}
 
 	public void startGameThread() {
 		// TODO start this thread as new JVM
 
-		gameThread = me.matej.Vertigo.Main.getInstance(); // The singleton
+		gameThread = GameMain.instance(); // The singleton
 		(new Thread(gameThread)).start();
 	}
 

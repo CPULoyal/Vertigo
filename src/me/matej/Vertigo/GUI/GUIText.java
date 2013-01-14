@@ -3,7 +3,7 @@ package me.matej.Vertigo.GUI;
 import me.matej.Vertigo.Entities.Entity;
 import me.matej.Vertigo.Entities.SizeVector;
 import me.matej.Vertigo.Entities.Vector;
-import me.matej.Vertigo.Main;
+import me.matej.Vertigo.GameMain;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
@@ -17,7 +17,7 @@ public class GUIText extends Entity {
 	public Color fontColor;
 
 	public GUIText(Vector loc, String text) {
-		this(loc, text, Main.getOpenGL().getFont());
+		this(loc, text, GameMain.getOpenGL().getFont());
 	}
 
 	public GUIText(Vector loc, String text, TrueTypeFont font) {

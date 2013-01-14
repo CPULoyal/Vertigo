@@ -30,27 +30,33 @@ public class Entity {
 	}
 
 	public boolean collidesWith(Entity o) {
-		if ((o.loc.x > loc.x && o.loc.x < loc.x + size.w && o.loc.y > loc.y && o.loc.y < loc.y + size.h) ||
-				(o.loc.x + o.size.w > loc.x && o.loc.x + o.size.w < loc.x + size.w && o.loc.y > loc.y && o.loc.y < loc.y + size.h) ||
-				(o.loc.x > loc.x && o.loc.x < loc.x + size.w && o.loc.y + o.size.h > loc.y && o.loc.y + o.size.h < loc.y + size.h) ||
-				(o.loc.x + o.size.w > loc.x && o.loc.x + o.size.w < loc.x + size.w && o.loc.y + o.size.w > loc.y && o.loc.y + o.size.h < loc.y + size.h) ||
-				(loc.x > o.loc.x && loc.x < o.loc.x + o.size.w && loc.y > o.loc.y && loc.y < o.loc.y + o.size.h) ||
-				(loc.x + size.w > o.loc.x && loc.x + size.w < o.loc.x + o.size.w && loc.y > o.loc.y && loc.y < o.loc.y + o.size.h) ||
-				(loc.x > o.loc.x && loc.x < o.loc.x + o.size.w && loc.y + size.h > o.loc.y && loc.y + size.h < o.loc.y + o.size.h) ||
-				(loc.x + size.w > o.loc.x && loc.x + size.w < o.loc.x + o.size.w && loc.y + size.h > o.loc.y && loc.y + size.h < o.loc.y + o.size.h)) {
+		if (isCollidingBottom(o) ||
+				isCollidingTop(o) ||
+				isCollidingLeft(o) ||
+				isCollidingRight(o)) {
 			return true;
 		}
 
 		return false;
 	}
 
-
+	public void fixBottomCollision (Entity o) {
+		loc.y = o.loc.y - size.h;
+	}
+	public void fixTopCollision (Entity o) {
+		loc.y = o.loc.y + o.size.h;
+	}
+	public void fixLeftCollision (Entity o) {
+		loc.x = o.loc.x + o.size.w;
+	}
+	public void fixRightCollision (Entity o) {
+		loc.x = o.loc.x - size.w;
+	}
 
 	public boolean isCollidingBottom(Entity o) {
 		if (((loc.x > o.loc.x && loc.x < o.loc.x + o.size.w) || (loc.x + size.w > o.loc.x && loc.x + size.w < o.loc.x + o.size.w) ||
 				(o.loc.x > loc.x && o.loc.x < loc.x + size.w) || (o.loc.x + o.size.w > loc.x && o.loc.x + o.size.w < loc.x + size.w)) &&
 				((loc.y + size.h > o.loc.y && loc.y + size.h < o.loc.y + o.size.h) || (o.loc.y > loc.y && o.loc.y < loc.y + size.h))) {
-			//loc.y = o.loc.y - size.h; // Bottom
 
 			return true;
 		}
@@ -62,7 +68,6 @@ public class Entity {
 		if (((loc.x > o.loc.x && loc.x < o.loc.x + o.size.w) || (loc.x + size.w > o.loc.x && loc.x + size.w < o.loc.x + o.size.w) ||
 				(o.loc.x > loc.x && o.loc.x < loc.x + size.w) || (o.loc.x + o.size.w > loc.x && o.loc.x + o.size.w < loc.x + size.w)) &&
 				((loc.y > o.loc.y && loc.y < o.loc.y + o.size.h) || (o.loc.y + o.size.h > loc.y && o.loc.y + o.size.h < loc.y + size.h))) {
-			//loc.y = o.loc.y + o.size.h; // Top
 
 			return true;
 		}
@@ -74,7 +79,6 @@ public class Entity {
 		if (loc.x > o.loc.x && loc.x < o.loc.x + o.size.w &&
 				((loc.y + size.h > o.loc.y && loc.y < o.loc.y) || (loc.y + size.h > o.loc.y + o.size.h && loc.y < o.loc.y + o.size.h) ||
 						(o.loc.y + o.size.h > loc.y + size.h && o.loc.y < loc.y + size.h) || (o.loc.y + o.size.h > loc.y && o.loc.y < loc.y))) {
-			//loc.x = o.loc.x + o.size.w; // Left
 
 			return true;
 		}
@@ -86,7 +90,6 @@ public class Entity {
 		if (loc.x + size.w > o.loc.x && loc.x + size.w < o.loc.x + o.size.w &&
 				((loc.y + size.h > o.loc.y && loc.y < o.loc.y) || (loc.y + size.h > o.loc.y + o.size.h && loc.y < o.loc.y + o.size.h) ||
 						(o.loc.y + o.size.h > loc.y + size.h && o.loc.y < loc.y + size.h) || (o.loc.y + o.size.h > loc.y && o.loc.y < loc.y))) {
-			//loc.x = o.loc.x - size.w; // Right
 
 			return true;
 		}

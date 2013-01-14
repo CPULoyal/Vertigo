@@ -3,19 +3,21 @@ package me.matej.Vertigo;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
-import me.matej.Vertigo.GameStates.GameStateClass;
+import me.matej.Vertigo.GameStates.*;
+//import me.matej.Vertigo.WorldCreator.States.WorldState;
 import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.TrueTypeFont;
 
 /**
  * @author matejkramny
  */
-public class Main implements OpenGLDelegate, Runnable {
+public class GameMain implements OpenGLDelegate, Runnable {
 
-	private static Main singleton; // Singleton instance
+	private static GameMain singleton; // Singleton instance
 
-	private static OpenGL openGL;
+	public static OpenGL openGL;
 
 	public static TrueTypeFont buttonFont;
 	public static TrueTypeFont headerFont;
@@ -24,14 +26,25 @@ public class Main implements OpenGLDelegate, Runnable {
 	public static final String displayName = "Vertigo";
 	public static final String version = "0.0.01";
 
+	public static final HashMap<String, GameStateClass> states = new HashMap<String, GameStateClass>();
+
+	static {
+		states.put("splashScreen", new SplashScreenState());
+		states.put("mainMenu", new MainMenuState());
+		states.put("game", new GameState());
+		states.put("gameMenu", new GameMenuState());
+		states.put("options", new OptionsState());
+		states.put("worlds", new WorldsState());
+//		states.put("creator", new WorldState()); // WorldCreator.States.WorldState
+	}
+
 	private String[] args;
 
-	protected Main() {
-	} // Prevents instantiation
+	protected GameMain() {} // Prevents instantiation
 
-	public static Main getInstance() {
+	public static GameMain instance() {
 		if (singleton == null)
-			singleton = new Main();
+			singleton = new GameMain();
 
 		return singleton;
 	}
@@ -50,7 +63,7 @@ public class Main implements OpenGLDelegate, Runnable {
 
 	@Override
 	public void run() {
-		openGL = new OpenGL(this);
+		openGL = new OpenGL();
 
 		Font awtFont = new Font("Arial", Font.BOLD, 20);
 		buttonFont = new TrueTypeFont(awtFont, true);
@@ -74,48 +87,45 @@ public class Main implements OpenGLDelegate, Runnable {
 		}
 
 		if (noMainMenu) {
-			activateState(GameStateEnum.Game);
+			activateState(states.get("game"));
 			System.out.println("Skipping MainMenu");
 		} else if (noSplash) {
-			activateState(GameStateEnum.MainMenu);
+			activateState(states.get("mainMenu"));
 			System.out.println("Skipping Splash screen");
 		} else {
-			activateState(GameStateEnum.Splash);
+			activateState(states.get("splashScreen"));
 		}
 
 		openGL.startLoop();
 	}
 
 	@Override
-	public void activateState(GameStateEnum state) {
-		GameStateClass stateClass = state.getStateInstance();
+	public void activateState(GameStateClass state) {
+		state.wantsToBeActive = true;
+		state.wantsToResignActive = false;
 
-		stateClass.wantsToBeActive = true;
-		stateClass.wantsToResignActive = false;
-
-		if (!stateClass.didInit)
-			stateClass.init();
+		if (!state.didInit)
+			state.init();
 	}
 
 	@Override
-	public void deactivateState(GameStateEnum state) {
-		if (!state.getStateInstance().wantsToResignActive) {
-			state.getStateInstance().wantsToResignActive = true;
+	public void deactivateState(GameStateClass state) {
+		if (!state.wantsToResignActive) {
+			state.wantsToResignActive = true;
 		}
 	}
 
 	@Override
-	public void changeState(GameStateEnum newState, GameStateEnum oldState) {
+	public void changeState(GameStateClass newState, GameStateClass oldState) {
 		activateState(newState);
 		deactivateState(oldState);
 	}
 
 	@Override
 	public void draw() {
-		for (int i = 0; i < GameStateEnum.values().length; i++) {
-			GameStateEnum state = GameStateEnum.values()[i];
-			if (state.getStateInstance().active) {
-				state.getStateInstance().draw();
+		for (GameStateClass state : states.values()) {
+			if (state.active) {
+				state.draw();
 				break;
 			}
 		}
@@ -123,28 +133,26 @@ public class Main implements OpenGLDelegate, Runnable {
 
 	@Override
 	public void preUpdate() {
-		for (GameStateEnum state : GameStateEnum.values()) {
-			GameStateClass stateClass = state.getStateInstance();
+		for (GameStateClass state : states.values()) {
 
-			if (stateClass.wantsToBeActive) {
-				stateClass.active = true;
-				stateClass.wantsToBeActive = false;
+			if (state.wantsToBeActive) {
+				state.active = true;
+				state.wantsToBeActive = false;
 			}
 
-			if (stateClass.wantsToResignActive) {
-				stateClass.wantsToResignActive = false;
-				stateClass.active = false;
+			if (state.wantsToResignActive) {
+				state.wantsToResignActive = false;
+				state.active = false;
 			}
 		}
 	}
 
 	@Override
 	public void update(int delta) {
-		for (GameStateEnum state : GameStateEnum.values()) {
-			GameStateClass stateClass = state.getStateInstance();
+		for (GameStateClass state : states.values()) {
 
-			if (stateClass.active) {
-				stateClass.update(delta);
+			if (state.active) {
+				state.update(delta);
 				break;
 			}
 		}
@@ -152,8 +160,8 @@ public class Main implements OpenGLDelegate, Runnable {
 
 	@Override
 	public void displayModeChanged(DisplayMode newDisplayMode) {
-		for (GameStateEnum state : GameStateEnum.values()) {
-			state.getStateInstance().displayModeChanged(newDisplayMode);
+		for (GameStateClass state : states.values()) {
+			state.displayModeChanged(newDisplayMode);
 		}
 	}
 
@@ -162,19 +170,23 @@ public class Main implements OpenGLDelegate, Runnable {
 	}
 
 	public static void main(String[] args) {
-		Main main = Main.getInstance();
+		GameMain main = GameMain.instance();
 		main.args = args;
 		main.run(); // Creates singleton and starts
 	}
 
 	@Override
 	public void keyPressed(int key) {
-		for (int i = 0; i < GameStateEnum.values().length; i++) {
-			GameStateEnum state = GameStateEnum.values()[i];
-			if (state.getStateInstance().active) {
-				state.getStateInstance().keyPressed(key);
+		for (GameStateClass state : states.values()) {
+			if (state.active) {
+				state.keyPressed(key);
 			}
 		}
+	}
+
+	@Override
+	public HashMap<String, GameStateClass> getStates() {
+		return states;
 	}
 
 }

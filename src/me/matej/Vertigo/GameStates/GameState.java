@@ -1,30 +1,17 @@
 package me.matej.Vertigo.GameStates;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-
-import java.io.*;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import me.matej.Vertigo.Entities.*;
-import me.matej.Vertigo.GameStateEnum;
-import me.matej.Vertigo.Main;
+import me.matej.Vertigo.GameMain;
 import me.matej.Vertigo.OpenGL;
 import me.matej.Vertigo.SoundManager;
 import me.matej.Vertigo.World.World;
 import me.matej.Vertigo.World.WorldLoader;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
-import org.newdawn.slick.Font;
 
 /**
  * @author matejkramny
@@ -50,7 +37,7 @@ public class GameState extends GameStateClass {
 		}
 
 		if (paused) {
-			GameStateEnum.GameMenu.getStateInstance().draw();
+			GameMain.states.get("gameMenu").draw();
 		}
 	}
 
@@ -77,7 +64,7 @@ public class GameState extends GameStateClass {
 				getBullets().removeAll(removeList);
 			}
 		} else {
-			GameStateEnum.GameMenu.getStateInstance().update(delta);
+			GameMain.states.get("gameMenu").update(delta);
 		}
 	}
 
@@ -86,7 +73,7 @@ public class GameState extends GameStateClass {
 		if (key == Keyboard.KEY_F3) {
 			WorldLoader.saveWorld(world);
 		} else if (key == Keyboard.KEY_ESCAPE && !paused) {
-			GameStateEnum.GameMenu.getStateInstance().init();
+			GameMain.states.get("gameMenu").init();
 			paused = true;
 		} else if (key == Keyboard.KEY_R) {
 			world.reset();
@@ -96,7 +83,7 @@ public class GameState extends GameStateClass {
 			sm.getExplosion().playAsSoundEffect(1.0f, 1.0f, false);
 		} else {
 			if (paused)
-				GameStateEnum.GameMenu.getStateInstance().keyPressed(key);
+				GameMain.states.get("gameMenu").keyPressed(key);
 			else
 				world.getMario().keyPressed(key);
 		}
@@ -159,7 +146,7 @@ public class GameState extends GameStateClass {
 				getBullets().add(b);
 			}
 		} else {
-			GameStateEnum.GameMenu.getStateInstance().mouseButtonPressed(index);
+			GameMain.states.get("gameMenu").mouseButtonPressed(index);
 		}
 	}
 
@@ -168,7 +155,7 @@ public class GameState extends GameStateClass {
 		// Uncomment line below to avoid side-effect when switching DM (world resets when dm changes)
 		this.didInit = true;
 
-		world = ((WorldsState)GameStateEnum.Worlds.getStateInstance()).getWorld();
+		world = ((WorldsState)GameMain.states.get("worlds")).getWorld();
 	}
 
 	@Override
@@ -178,8 +165,8 @@ public class GameState extends GameStateClass {
 	}
 
 	public void setPaused(boolean newPaused) {
-		if (!GameStateEnum.GameMenu.getStateInstance().didInit)
-			GameStateEnum.GameMenu.getStateInstance().init();
+		if (!GameMain.states.get("gameMenu").didInit)
+			GameMain.states.get("gameMenu").init();
 		paused = newPaused;
 	}
 

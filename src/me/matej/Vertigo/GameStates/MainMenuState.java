@@ -8,12 +8,11 @@ import me.matej.Vertigo.Entities.SizeVector;
 import me.matej.Vertigo.Entities.Vector;
 import me.matej.Vertigo.GUI.GUIButton;
 import me.matej.Vertigo.GUI.GUIEventInterface;
-import me.matej.Vertigo.GameStateEnum;
+import me.matej.Vertigo.GameMain;
 import me.matej.Vertigo.OpenGL;
 import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
-import me.matej.Vertigo.Main;
 
 /**
  * @author matejkramny
@@ -53,12 +52,12 @@ public class MainMenuState extends GameStateClass implements GUIEventInterface {
 	@Override
 	public void mouseClicked(Entity o, int index) {
 		if (o.equals(buttons.get("worlds"))) {
-			Main.getInstance().changeState(GameStateEnum.Worlds, GameStateEnum.MainMenu);
+			GameMain.instance().changeState(GameMain.states.get("worlds"), GameMain.states.get("mainMenu"));
 		} else if (o.equals(buttons.get("options"))) {
 			// Activate Options screen
 			active = false;
-			GameStateEnum.Options.getStateInstance().active = true;
-			GameStateEnum.Options.getStateInstance().init();
+			GameMain.states.get("options").active = true;
+			GameMain.states.get("options").init();
 		} else if (o.equals(buttons.get("quit"))) {
 			System.exit(0);
 		}
@@ -68,7 +67,7 @@ public class MainMenuState extends GameStateClass implements GUIEventInterface {
 	public void init() {
 		this.didInit = true;
 
-		font = Main.buttonFont;
+		font = GameMain.buttonFont;
 
 		DisplayMode dm = OpenGL.getDisplayMode();
 		buttons = new HashMap<String, GUIButton>();

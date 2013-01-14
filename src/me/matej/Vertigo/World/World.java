@@ -1,13 +1,12 @@
 package me.matej.Vertigo.World;
 
 import me.matej.Vertigo.Entities.*;
-import me.matej.Vertigo.Main;
+import me.matej.Vertigo.GameMain;
 import me.matej.Vertigo.OpenGL;
 import org.newdawn.slick.Color;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 /*
 	TODO toggling fullscreen not working correctly
@@ -31,7 +30,7 @@ public class World {
 		obstacles = new ArrayList<Obstacle>();
 		mario = new Mario(new Vector(0, 0), new SizeVector(100, 133));
 		marioReset = new Mario(new Vector(0,0), new SizeVector(100, 133));
-		location = Main.getSaveDir() + ((int)Math.random()*1000) + new Date().getTime() + ".vertigo.world.json";
+		location = GameMain.getSaveDir() + ((int)Math.random()*1000) + new Date().getTime() + ".vertigo.world.json";
 		seed = "nothing yet";
 		created = new Date().getTime();
 	}

@@ -2,6 +2,7 @@ package me.matej.Vertigo;
 
 import java.awt.Font;
 
+import me.matej.Vertigo.GameStates.GameStateClass;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
@@ -25,9 +26,9 @@ final public class OpenGL {
 	private boolean running = true; // App shuts down if false
 	private static DisplayMode displayMode; // Current display mode
 	private static TrueTypeFont font; // Font used to display text
-	private OpenGLDelegate delegate;
 	private SoundManager soundManager = SoundManager.getSingleton();
 	private boolean ignoresDefaultKeypress = false;
+	private static final GameMain main = GameMain.instance();
 
 	private boolean setupComplete = false;
 
@@ -64,9 +65,7 @@ final public class OpenGL {
 		this.ignoresDefaultKeypress = newValue;
 	}
 
-	public OpenGL(OpenGLDelegate delegate) {
-		this.delegate = delegate;
-
+	public OpenGL() {
 		try {
 			this.setDisplayMode(new DisplayMode(800, 500), fullscreen);
 			Display.create();
@@ -133,12 +132,12 @@ final public class OpenGL {
 		Display.setVSyncEnabled(false);
 		Display.setResizable(false);
 
-		GL11.glClearColor(1f, 1f, 1f, 1.0f);
+		GL11.glClearColor(1f, 1f, 1f, 1f);
 		GL11.glClearDepth(1);
 	}
 
 	private void update(int delta) {
-		delegate.preUpdate();
+		main.preUpdate();
 
 		while (Keyboard.next() && Keyboard.getEventKeyState()) {
 			int k = Keyboard.getEventKey();
@@ -164,22 +163,21 @@ final public class OpenGL {
 				}
 				*/
 			} else {
-				delegate.keyPressed(k);
+				main.keyPressed(k);
 			}
 		}
 
 		while (Mouse.next() && Mouse.getEventButtonState()) {
 			int button = Mouse.getEventButton();
 
-			for (int i = 0; i < GameStateEnum.values().length; i++) {
-				GameStateEnum state = GameStateEnum.values()[i];
-				if (state.getStateInstance().active) {
-					state.getStateInstance().mouseButtonPressed(button);
+			for (GameStateClass state : main.getStates().values()) {
+				if (state.active) {
+					state.mouseButtonPressed(button);
 				}
 			}
 		}
 
-		delegate.update(delta);
+		main.update(delta);
 		soundManager.update(delta);
 	}
 
@@ -187,7 +185,7 @@ final public class OpenGL {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 
-		delegate.draw();
+		main.draw();
 	}
 
 	private void windowResized(int newWidth, int newHeight) {
@@ -210,7 +208,7 @@ final public class OpenGL {
 
 		if (setupComplete) {
 			this.initGL();
-			delegate.displayModeChanged(displayMode);
+			main.displayModeChanged(displayMode);
 		}
 	}
 

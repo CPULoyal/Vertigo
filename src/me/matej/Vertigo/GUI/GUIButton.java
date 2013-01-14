@@ -1,17 +1,13 @@
 package me.matej.Vertigo.GUI;
 
-import java.awt.*;
-import java.io.IOException;
-
 import me.matej.Vertigo.Entities.ColouredEntity;
 import me.matej.Vertigo.Entities.Entity;
 import me.matej.Vertigo.Entities.SizeVector;
 import me.matej.Vertigo.Entities.Vector;
-import me.matej.Vertigo.Main;
+import me.matej.Vertigo.GameMain;
 import me.matej.Vertigo.OpenGL;
 import me.matej.Vertigo.SoundManager;
 import org.lwjgl.input.*;
-import org.lwjgl.input.Cursor;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
@@ -45,7 +41,7 @@ public class GUIButton extends ColouredEntity {
 		if (text != null && text.length() != 0) {
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			if (font == null)
-				font = Main.getOpenGL().getFont();
+				font = GameMain.getOpenGL().getFont();
 			int fwidth = font.getWidth(text);
 			font.drawString((float) (loc.x + size.w / 2 - fwidth / 2), (float) (loc.y + size.h / 2 - font.getHeight(text) / 2), text, fontColor);
 			GL11.glDisable(GL11.GL_TEXTURE_2D);

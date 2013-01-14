@@ -7,8 +7,7 @@ import me.matej.Vertigo.Entities.SizeVector;
 import me.matej.Vertigo.Entities.Vector;
 import me.matej.Vertigo.GUI.GUIButton;
 import me.matej.Vertigo.GUI.GUIEventInterface;
-import me.matej.Vertigo.GameStateEnum;
-import me.matej.Vertigo.Main;
+import me.matej.Vertigo.GameMain;
 import me.matej.Vertigo.OpenGL;
 import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.Color;
@@ -41,7 +40,7 @@ public class OptionsState extends GameStateClass implements GUIEventInterface {
 	@Override
 	public void mouseClicked(Entity o, int index) {
 		if (o.equals(buttons.get("close"))) {
-			Main.getInstance().changeState(GameStateEnum.MainMenu, GameStateEnum.Options);
+			GameMain.instance().changeState(GameMain.states.get("mainMenu"), GameMain.states.get("options"));
 		}
 	}
 
@@ -58,7 +57,7 @@ public class OptionsState extends GameStateClass implements GUIEventInterface {
 	public void init() {
 		this.didInit = true;
 
-		font = Main.buttonFont;
+		font = GameMain.buttonFont;
 
 		buttons = new HashMap<String, GUIButton>();
 		DisplayMode dm = OpenGL.getDisplayMode();

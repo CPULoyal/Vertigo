@@ -1,12 +1,10 @@
 package me.matej.Vertigo.World;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
-import me.matej.Vertigo.Main;
+import me.matej.Vertigo.GameMain;
 
 import java.io.*;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 /**
@@ -59,7 +57,7 @@ public abstract class WorldLoader {
 		}
 	}
 
-	private static String worldsFileLoc = Main.getSaveDir() + "worlds.list";
+	private static String worldsFileLoc = GameMain.getSaveDir() + "worlds.list";
 
 	public static String getWorldsLoc() {
 		return worldsFileLoc;
@@ -101,7 +99,7 @@ public abstract class WorldLoader {
 	public static World[] loadWorlds (String[] worlds) {
 		World[] worldsArray = new World[worlds.length];
 		for (int i = 0; i < worlds.length; i++) {
-			worldsArray[i] = WorldLoader.loadWorld(Main.getSaveDir()+worlds[i]);
+			worldsArray[i] = WorldLoader.loadWorld(GameMain.getSaveDir()+worlds[i]);
 		}
 
 		return worldsArray;

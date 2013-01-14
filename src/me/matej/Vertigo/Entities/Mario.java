@@ -1,8 +1,7 @@
 package me.matej.Vertigo.Entities;
 
-import me.matej.Vertigo.GameStateEnum;
+import me.matej.Vertigo.GameMain;
 import me.matej.Vertigo.GameStates.GameState;
-import me.matej.Vertigo.Main;
 import me.matej.Vertigo.OpenGL;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -64,7 +63,7 @@ public class Mario extends ColouredEntity {
 	}
 
 	private boolean isMidAir() {
-		for (Obstacle o : ((GameState) GameStateEnum.Game.getStateInstance()).getObstacles()) {
+		for (Obstacle o : ((GameState) GameMain.states.get("game")).getObstacles()) {
 			if (o.touchesWith(this))
 				return false;
 		}
@@ -77,7 +76,7 @@ public class Mario extends ColouredEntity {
 	private boolean wasJumping = false;
 
 	public void update(int delta) {
-		GameState game = ((GameState) GameStateEnum.Game.getStateInstance());
+		GameState game = ((GameState) GameMain.states.get("game"));
 		Vector oldLoc = new Vector(loc.x, loc.y);
 		boolean marioAttractedByGravity = true;
 
@@ -117,7 +116,8 @@ public class Mario extends ColouredEntity {
 			}
 
 			for (Obstacle o : game.getObstacles()) {
-				o.isCollidingLeft(this);
+				if (o.isCollidingLeft(this))
+					fixLeftCollision(o);
 			}
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_D) && !Keyboard.isKeyDown(Keyboard.KEY_A)) {
@@ -129,7 +129,8 @@ public class Mario extends ColouredEntity {
 			}
 
 			for (Obstacle o : game.getObstacles()) {
-				o.isCollidingRight(this);
+				if (o.isCollidingRight(this))
+					fixRightCollision(o);
 			}
 		}
 
@@ -150,6 +151,7 @@ public class Mario extends ColouredEntity {
 				falling = true;
 				for (Obstacle o : game.getObstacles()) {
 					if (o.isCollidingBottom(this)) {
+						fixBottomCollision(o);
 						if (wasJumping) {
 							wasJumping = false;
 							lastJumpEnd = System.currentTimeMillis();
@@ -165,6 +167,7 @@ public class Mario extends ColouredEntity {
 			} else {
 				for (Obstacle o : game.getObstacles()) {
 					if (o.isCollidingTop(this)) {
+						fixTopCollision(o);
 						jumpAngle = 90;
 						falling = true;
 						marioAttractedByGravity = true;
@@ -179,7 +182,7 @@ public class Mario extends ColouredEntity {
 		health += diff;
 
 		if (health <= 0) {
-			((GameState) GameStateEnum.Game.getStateInstance()).keyPressed(Keyboard.KEY_R); // Reset
+			((GameState) GameMain.states.get("game")).keyPressed(Keyboard.KEY_R); // Reset
 			health = 100;
 		}
 	}

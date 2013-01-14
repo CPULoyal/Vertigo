@@ -1,16 +1,19 @@
 package me.matej.Vertigo;
 
+import me.matej.Vertigo.GameStates.GameStateClass;
 import org.lwjgl.opengl.DisplayMode;
+
+import java.util.HashMap;
 
 /**
  * @author matejkramny
  */
 public interface OpenGLDelegate {
-	public void activateState(GameStateEnum state);
+	public void activateState(GameStateClass state);
 
-	public void deactivateState(GameStateEnum state);
+	public void deactivateState(GameStateClass state);
 
-	public void changeState(GameStateEnum newState, GameStateEnum oldState);
+	public void changeState(GameStateClass newState, GameStateClass oldState);
 
 	public void draw();
 
@@ -21,4 +24,6 @@ public interface OpenGLDelegate {
 	public void displayModeChanged(DisplayMode newDisplayMode);
 
 	public void keyPressed(int key);
+
+	public HashMap<String, GameStateClass> getStates ();
 }

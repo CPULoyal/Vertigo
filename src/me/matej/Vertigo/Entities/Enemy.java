@@ -41,6 +41,10 @@ public class Enemy extends ColouredEntity {
 		super.drawVertices();
 	}
 
+	public void update(int delta) {
+
+	}
+
 	public void affectHealth (int amount) {
 		health += amount;
 

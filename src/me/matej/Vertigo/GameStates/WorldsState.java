@@ -10,6 +10,7 @@ import me.matej.Vertigo.OpenGL;
 import me.matej.Vertigo.WebService.ConnectionWrapper;
 import me.matej.Vertigo.WebService.WorldListing;
 import me.matej.Vertigo.World.World;
+import me.matej.Vertigo.World.WorldGenerator;
 import me.matej.Vertigo.World.WorldLoader;
 import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.Color;
@@ -84,6 +85,10 @@ public class WorldsState extends GameStateClass implements GUIEventInterface {
 		} else {
 			if (o.equals(buttons.get("close"))) {
 				GameMain.instance().changeState(GameMain.states.get("mainMenu"), GameMain.states.get("worlds"));
+			} else if (o.equals(buttons.get("new"))) {
+				this.clickedWorld = WorldGenerator.generateWorld();
+				GameMain.instance().changeState(GameMain.states.get("game"), GameMain.states.get("worlds"));
+				((GameState)GameMain.states.get("game")).setPaused(true);
 			} else if (o.equals(buttons.get("default"))) {
 				GameMain.instance().changeState(GameMain.states.get("game"), GameMain.states.get("worlds"));
 			} else if (o.equals(buttons.get("serverWorlds"))) {
@@ -148,7 +153,13 @@ public class WorldsState extends GameStateClass implements GUIEventInterface {
 			buttons.put("worldButton"+i, btn);
 		}
 
-		GUIButton btn = new GUIButton("Server Worlds", Color.black, font, new Vector(dm, SizeVector.buttonSize, 0, baseY + 70 * i), SizeVector.buttonSize, Color.green, new Color(0.5f, 1f, 0f), this);
+		GUIButton btn = new GUIButton("New", Color.black, font, new Vector(dm, SizeVector.buttonSize, 0, baseY + 65 * i), SizeVector.buttonSize, Color.green, new Color(0.5f, 1f, 0f), this);
+		btn.getBorder().configure(new Vector(dm, SizeVector.buttonBorderSize, 0, baseY + 65 * i), SizeVector.buttonBorderSize, Color.black);
+		buttons.put("new", btn);
+
+		i++;
+
+		btn = new GUIButton("Server Worlds", Color.black, font, new Vector(dm, SizeVector.buttonSize, 0, baseY + 70 * i), SizeVector.buttonSize, Color.green, new Color(0.5f, 1f, 0f), this);
 		btn.getBorder().configure(new Vector(dm, SizeVector.buttonBorderSize, 0, baseY + 70 * i), SizeVector.buttonBorderSize, Color.black);
 		buttons.put("serverWorlds", btn);
 

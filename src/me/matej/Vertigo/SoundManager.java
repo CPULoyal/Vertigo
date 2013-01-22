@@ -1,6 +1,7 @@
 package me.matej.Vertigo;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.newdawn.slick.openal.Audio;
 import org.newdawn.slick.openal.AudioLoader;
@@ -57,7 +58,8 @@ public class SoundManager {
 	}
 
 	private Audio getAudio(String type, String path) throws IOException {
-		return AudioLoader.getAudio(type, ResourceLoader.getResourceAsStream(path));
+		InputStream is = ResourceLoader.getResourceAsStream(path);
+		return AudioLoader.getAudio(type, is);
 	}
 
 	public void update(int delta) {

@@ -8,6 +8,8 @@ import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
 
+import java.util.ArrayList;
+
 /**
  * @author matejkramny
  */
@@ -173,6 +175,17 @@ public class Mario extends ColouredEntity {
 						marioAttractedByGravity = true;
 						jumpVelocity = 0;
 					}
+				}
+			}
+		}
+
+		// Check collision with other 'enemies' entities
+		ArrayList<Enemy> enemies = game.getWorld().getEnemies();
+		if (enemies.size() != 0) {
+			for (Enemy e : enemies) {
+				if (e.collidesWith(this)) {
+					affectHealth(-10);
+					loc.x -= e.size.w;
 				}
 			}
 		}

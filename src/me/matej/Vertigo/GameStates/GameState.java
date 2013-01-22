@@ -177,6 +177,10 @@ public class GameState extends GameStateClass {
 		return world.getMario();
 	}
 
+	public World getWorld () {
+		return world;
+	}
+
 	/**
 	 * @return the obstacles
 	 */

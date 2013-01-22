@@ -3,6 +3,7 @@ package me.matej.Vertigo;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 
 import me.matej.Vertigo.GameStates.*;
@@ -170,6 +171,13 @@ public class GameMain implements OpenGLDelegate, Runnable {
 	}
 
 	public static void main(String[] args) {
+		if (args.length != 0 && args[0].equals("--noloadnatives")) {
+			System.out.println("Skip loading natives");
+		} else {
+			System.out.println("Loading natives");
+			System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + "/libs/natives");
+		}
+
 		GameMain main = GameMain.instance();
 		main.args = args;
 		main.run(); // Creates singleton and starts

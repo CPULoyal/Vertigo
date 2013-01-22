@@ -12,6 +12,8 @@ import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
 
+import java.util.Date;
+
 /**
  * @author matejkramny
  */
@@ -25,6 +27,8 @@ public class GUIButton extends ColouredEntity {
 	private boolean isHoverState = false;
 	public GUIEventInterface delegate;
 
+	private long startHover;
+
 	@Override
 	public void draw() {
 		if (border != null)
@@ -33,7 +37,12 @@ public class GUIButton extends ColouredEntity {
 		if (isHoverState) {
 			Color c = color; // Keeping the reference safe from garbage collector
 			color = hoverColor;
-			super.draw();
+			super.drawBegin();
+			long diff = startHover - new Date().getTime();
+			if (diff > 10000)
+			GL11.glScaled(diff / 1000, diff / 1000, 0);
+			super.drawVertices();
+			super.drawEnd();
 			color = c; // Restore the color
 		} else
 			super.draw();
@@ -65,6 +74,9 @@ public class GUIButton extends ColouredEntity {
 		mouse.loc.y = OpenGL.getDisplayMode().getHeight() - Mouse.getY();
 
 		if (mouse.collidesWith(this)) {
+			if (!isHoverState) {
+				startHover = new Date().getTime();
+			}
 			isHoverState = true;
 		} else {
 			isHoverState = false;
